@@ -432,12 +432,13 @@ class ConfigManager(private val context: Context) {
     fun getAvailableQualityOptions(): List<String> {
         val minSide = min(getMaxSupportedResolution().first, getMaxSupportedResolution().second)
         val list = mutableListOf(QUALITY_MAX)
-        if (minSide > 2160) list.add(QUALITY_4K)
-        if (minSide > 1440) list.add(QUALITY_2K)
-        if (minSide > 1080) list.add(QUALITY_1080P)
-        if (minSide > 720) list.add(QUALITY_720P)
-        if (minSide > 480) list.add(QUALITY_480P)
-        if (minSide > 360) list.add(QUALITY_360P)
+        // ">=" so a preset equal to the screen's short side (e.g. 1080p on a 1080x2400 phone) is still offered.
+        if (minSide >= 2160) list.add(QUALITY_4K)
+        if (minSide >= 1440) list.add(QUALITY_2K)
+        if (minSide >= 1080) list.add(QUALITY_1080P)
+        if (minSide >= 720) list.add(QUALITY_720P)
+        if (minSide >= 480) list.add(QUALITY_480P)
+        if (minSide >= 360) list.add(QUALITY_360P)
         list.add(QUALITY_240P)
         return list.distinct()
     }
