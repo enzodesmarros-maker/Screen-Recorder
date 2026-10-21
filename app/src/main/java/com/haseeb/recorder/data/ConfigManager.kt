@@ -12,6 +12,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.documentfile.provider.DocumentFile
 import com.haseeb.recorder.R
+import kotlin.math.max
 import kotlin.math.min
 
 /*
@@ -311,7 +312,9 @@ class ConfigManager(private val context: Context) {
 
         if (targetShortSide > 0) {
             val physicalShortSide = min(physicalWidth, physicalHeight)
-            if (targetShortSide < physicalShortSide) {
+            val isDownscale = targetShortSide < physicalShortSide
+            val isUpscale1080 = videoQuality == QUALITY_1080P && targetShortSide > physicalShortSide
+            if (isDownscale || isUpscale1080) {
                 val scaleRatio = targetShortSide.toFloat() / physicalShortSide.toFloat()
                 baseWidth = (physicalWidth * scaleRatio).toInt()
                 baseHeight = (physicalHeight * scaleRatio).toInt()
@@ -427,6 +430,30 @@ class ConfigManager(private val context: Context) {
     }
 
     /*
+     * Checks if the device H.264 encoder can record the screen upscaled to 1080p
+     * (used when the physical screen is smaller than 1080p, e.g. 720x1600).
+     */
+    private fun canUpscaleTo1080p(): Boolean {
+        return try {
+            val (w, h) = getMaxSupportedResolution()
+            val shortSide = min(w, h)
+            val longSide = max(w, h)
+            if (shortSide <= 0) return false
+            val ratio = 1080f / shortSide
+            var targetLong = (longSide * ratio).toInt()
+            if (targetLong % 2 != 0) targetLong--
+            val mime = MediaFormat.MIMETYPE_VIDEO_AVC
+            MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.any { info ->
+                info.isEncoder &&
+                    info.supportedTypes.any { it.equals(mime, ignoreCase = true) } &&
+                    info.getCapabilitiesForType(mime).videoCapabilities?.isSizeSupported(targetLong, 1080) == true
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /*
      * Returns the list of quality options supported by the current device screen.
      */
     fun getAvailableQualityOptions(): List<String> {
@@ -435,7 +462,7 @@ class ConfigManager(private val context: Context) {
         // ">=" so a preset equal to the screen's short side (e.g. 1080p on a 1080x2400 phone) is still offered.
         if (minSide >= 2160) list.add(QUALITY_4K)
         if (minSide >= 1440) list.add(QUALITY_2K)
-        if (minSide >= 1080) list.add(QUALITY_1080P)
+        if (minSide >= 1080 || canUpscaleTo1080p()) list.add(QUALITY_1080P)
         if (minSide >= 720) list.add(QUALITY_720P)
         if (minSide >= 480) list.add(QUALITY_480P)
         if (minSide >= 360) list.add(QUALITY_360P)
