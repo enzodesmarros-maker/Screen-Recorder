@@ -801,7 +801,6 @@ class ScreenRecordService : Service() {
         isMuted = false
         RecordingStateManager.onRecordingStopped()
 
-        stopService(Intent(this, RecordingOverlayService::class.java))
         stopService(Intent(this, CameraOverlayService::class.java))
         stopService(Intent(this, DrawOverlayService::class.java))
 
@@ -1000,7 +999,6 @@ class ScreenRecordService : Service() {
         isStarting = false
         stopRecording()
         releaseWakeLock()
-        stopService(Intent(this, RecordingOverlayService::class.java))
         RecordingStateManager.notifyListeners()
         super.onDestroy()
     }
