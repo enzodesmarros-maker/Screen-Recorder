@@ -1,6 +1,6 @@
 <div align="center">
   <img src="app/logo.png" alt="ScreenRecorder Logo" width="128" />
-  <h1>ScreenRecorder</h1>
+  <h1>Screen Cats</h1>
 
   <p>
     <a href="https://apt.izzysoft.de/fdroid/index/apk/com.haseeb.recorder">
