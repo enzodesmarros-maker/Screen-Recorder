@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.listitem.ListItemViewHolder
+import com.haseeb.recorder.compress.CompressionService
+import com.haseeb.recorder.util.VideoCompressor
 import com.haseeb.recorder.R
 import com.haseeb.recorder.data.VideoFile
 import com.haseeb.recorder.databinding.DialogEditTextBinding
@@ -116,6 +118,7 @@ class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallbac
                 when (item.itemId) {
                     R.id.action_rename -> { showRenameDialog(video, view.context); true }
                     R.id.action_share -> { shareVideo(video, view.context); true }
+                    R.id.action_compress -> { showCompressDialog(video, view.context); true }
                     R.id.action_delete -> { showDeleteDialog(video, view.context); true }
                     else -> false
                 }
@@ -226,6 +229,42 @@ class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallbac
 
     private fun showDeleteFailedToast(context: android.content.Context) {
         Toast.makeText(context, context.getString(R.string.VideoAdapter_toast_delete_failed), Toast.LENGTH_SHORT).show()
+    }
+
+    /*
+     * Lets the user pick a compression strength for the selected recording.
+     */
+    private fun showCompressDialog(video: VideoFile, context: android.content.Context) {
+        val labels = arrayOf(
+            context.getString(R.string.VideoAdapter_compress_preset_light),
+            context.getString(R.string.VideoAdapter_compress_preset_balanced),
+            context.getString(R.string.VideoAdapter_compress_preset_maximum)
+        )
+        var selected = 1
+        MaterialAlertDialogBuilder(context)
+            .setTitle(context.getString(R.string.VideoAdapter_compress_title))
+            .setSingleChoiceItems(labels, selected) { _, which -> selected = which }
+            .setPositiveButton(context.getString(R.string.VideoAdapter_compress_btn_start)) { _, _ ->
+                startCompression(video, VideoCompressor.Preset.values()[selected], context)
+            }
+            .setNegativeButton(context.getString(R.string.VideoAdapter_btn_cancel), null)
+            .show()
+    }
+
+    /*
+     * Starts the background compression service and tells the user where to follow the progress.
+     */
+    private fun startCompression(video: VideoFile, preset: VideoCompressor.Preset, context: android.content.Context) {
+        if (CompressionService.isRunning) {
+            Toast.makeText(context, context.getString(R.string.VideoAdapter_compress_toast_busy), Toast.LENGTH_LONG).show()
+            return
+        }
+        try {
+            CompressionService.start(context, video.uri, video.name, video.size, video.duration, preset)
+            Toast.makeText(context, context.getString(R.string.VideoAdapter_compress_toast_started), Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, context.getString(R.string.VideoAdapter_compress_toast_failed), Toast.LENGTH_LONG).show()
+        }
     }
 
     /**
