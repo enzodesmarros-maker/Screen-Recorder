@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,7 +20,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.haseeb.recorder.R
+import com.haseeb.recorder.compress.CompressionService
 import com.haseeb.recorder.data.ConfigManager
+import com.haseeb.recorder.overlay.RecordingOverlayService
 import com.haseeb.recorder.data.VideoFile
 import com.haseeb.recorder.recording.ScreenRecordService
 import com.haseeb.recorder.ui.adapter.VideoAdapter
@@ -45,8 +48,9 @@ class MainActivity : AppCompatActivity() {
 
     private val recordingStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == ScreenRecordService.ACTION_STATE_CHANGED) {
-                syncRecordingUi()
+            when (intent?.action) {
+                ScreenRecordService.ACTION_STATE_CHANGED -> syncRecordingUi()
+                CompressionService.ACTION_COMPRESSION_DONE -> loadVideos()
             }
         }
     }
@@ -133,6 +137,11 @@ class MainActivity : AppCompatActivity() {
         binding.fabRecord.setOnClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
             handleRecordAction()
+        }
+
+        binding.fabBubble.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            toggleBubble()
         }
 
         binding.btnSettings.setOnClickListener {
@@ -333,7 +342,9 @@ class MainActivity : AppCompatActivity() {
         contentResolver.registerContentObserver(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, videoObserver
         )
-        val filter = IntentFilter(ScreenRecordService.ACTION_STATE_CHANGED)
+        val filter = IntentFilter(ScreenRecordService.ACTION_STATE_CHANGED).apply {
+            addAction(CompressionService.ACTION_COMPRESSION_DONE)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(recordingStateReceiver, filter, Context.RECEIVER_EXPORTED)
         } else {
@@ -347,6 +358,38 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         syncRecordingUi()
+        syncBubbleButton()
+    }
+
+    /*
+     * Shows "Open bubble" or "Close bubble" depending on whether the floating bubble is running.
+     */
+    private fun syncBubbleButton() {
+        setBubbleButtonState(RecordingOverlayService.isRunning)
+    }
+
+    private fun setBubbleButtonState(running: Boolean) {
+        binding.fabBubble.text = getString(
+            if (running) R.string.activity_main_bubble_close else R.string.activity_main_bubble_open
+        )
+    }
+
+    /*
+     * Turns the floating bubble on (without recording) or off.
+     */
+    private fun toggleBubble() {
+        if (RecordingOverlayService.isRunning) {
+            stopService(Intent(this, RecordingOverlayService::class.java))
+            setBubbleButtonState(false)
+            return
+        }
+        if (!checkOverlayPermission()) return
+        configManager.isRecordingOverlayEnabled = true
+        try {
+            startService(Intent(this, RecordingOverlayService::class.java))
+            setBubbleButtonState(true)
+            Toast.makeText(this, getString(R.string.activity_main_bubble_active), Toast.LENGTH_SHORT).show()
+        } catch (_: Exception) {}
     }
 
     /*
