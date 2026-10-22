@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">اسکرین ریکارڈر</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">معلومات</string>
     <string name="AboutActivity_title">معلومات</string>
     <string name="AboutActivity_desc_avatar">پروفائل تصویر</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">ای میل پروفائل</string>
     <string name="AboutActivity_desc_update">اپڈیٹس چیک کریں</string>
     <string name="AboutActivity_version_format">ورژن %1$s</string>
-    <string name="AboutActivity_app_title">اسکرین ریکارڈر</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">اینڈرائیڈ کے لیے اعلیٰ کارکردگی، شفافیت اور مکمل صارف پرائیویسی کے ساتھ ایک اوپن سورس اسکرین ریکارڈر۔</string>
     <string name="AboutActivity_tag_open_source">اوپن سورس</string>
     <string name="AboutActivity_tag_community">کمیونٹی</string>

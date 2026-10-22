@@ -2,10 +2,12 @@ package com.haseeb.recorder.overlay
 
 import android.content.Context
 import android.graphics.Color
+import android.hardware.display.DisplayManager
 import android.graphics.PixelFormat
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.util.DisplayMetrics
+import android.view.Display
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -16,6 +18,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import com.haseeb.recorder.R
 import com.haseeb.recorder.data.ConfigManager
+import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.util.BubbleIconStore
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -33,8 +36,9 @@ class IdleBubbleWindow(
 ) : RecordingOverlayWindow {
 
     companion object {
-        @Volatile private var lastX = Int.MIN_VALUE
-        @Volatile private var lastY = Int.MIN_VALUE
+        /* Last position as a 0..1 fraction of the free area, so it survives rotation. */
+        @Volatile private var lastXFrac = Float.NaN
+        @Volatile private var lastYFrac = Float.NaN
     }
 
     private var bubble: ImageView? = null
@@ -93,11 +97,13 @@ class IdleBubbleWindow(
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            x = if (lastX != Int.MIN_VALUE) lastX else (16 * density).toInt()
-            y = if (lastY != Int.MIN_VALUE) lastY else (160 * density).toInt()
+            val maxX = (screenW - sizePx).coerceAtLeast(0)
+            val maxY = (screenH - sizePx).coerceAtLeast(0)
+            val wantedX = if (!lastXFrac.isNaN()) (lastXFrac * maxX).toInt() else (16 * density).toInt()
+            val wantedY = if (!lastYFrac.isNaN()) (lastYFrac * maxY).toInt() else (160 * density).toInt()
+            x = snapX(wantedX, screenW)
+            y = wantedY.coerceIn(0, maxY)
         }
-        lp.x = snapX(lp.x, screenW)
-        lp.y = lp.y.coerceIn(0, (screenH - sizePx).coerceAtLeast(0))
         params = lp
 
         attachDragHandling(view, lp)
@@ -105,8 +111,9 @@ class IdleBubbleWindow(
         try {
             windowManager.addView(view, lp)
             bubble = view
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             // Overlay permission missing; the permission flow will ask for it when recording starts.
+            AppLog.w("Overlay", "Could not show the bubble (overlay permission?)", e)
             bubble = null
         }
     }
@@ -139,16 +146,16 @@ class IdleBubbleWindow(
         }
     }
 
+    /*
+     * Real size of the default display in its current rotation (window metrics of a service can be stale).
+     */
     private fun screenSize(): Pair<Int, Int> {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val bounds = windowManager.currentWindowMetrics.bounds
-            Pair(bounds.width(), bounds.height())
-        } else {
-            val metrics = DisplayMetrics()
-            @Suppress("DEPRECATION")
-            windowManager.defaultDisplay.getRealMetrics(metrics)
-            Pair(metrics.widthPixels, metrics.heightPixels)
-        }
+        val metrics = DisplayMetrics()
+        val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        val display = displayManager.getDisplay(Display.DEFAULT_DISPLAY)
+        @Suppress("DEPRECATION")
+        display.getRealMetrics(metrics)
+        return Pair(metrics.widthPixels, metrics.heightPixels)
     }
 
     /*
@@ -215,8 +222,10 @@ class IdleBubbleWindow(
                         hideRemoveTarget(animated = true)
                         lp.x = snapX(lp.x, screenW)
                         try { windowManager.updateViewLayout(v, lp) } catch (_: Exception) {}
-                        lastX = lp.x
-                        lastY = lp.y
+                        val maxX = (screenW - sizePx).coerceAtLeast(1)
+                        val maxY = (screenH - sizePx).coerceAtLeast(1)
+                        lastXFrac = (lp.x.toFloat() / maxX).coerceIn(0f, 1f)
+                        lastYFrac = (lp.y.toFloat() / maxY).coerceIn(0f, 1f)
                     }
                     true
                 }

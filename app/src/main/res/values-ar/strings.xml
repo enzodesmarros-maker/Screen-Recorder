@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">مسجل الشاشة</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">حول التطبيق</string>
     <string name="AboutActivity_title">حول التطبيق</string>
     <string name="AboutActivity_desc_avatar">الصورة الشخصية</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">البريد الإلكتروني</string>
     <string name="AboutActivity_desc_update">التحقق من وجود تحديثات</string>
     <string name="AboutActivity_version_format">الإصدار %1$s</string>
-    <string name="AboutActivity_app_title">مسجل الشاشة</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">مسجل شاشة مفتوح المصدر مصمم للوضوح والأداء والخصوصية الكاملة للمستخدم على أندرويد.</string>
     <string name="AboutActivity_tag_open_source">مفتوح المصدر</string>
     <string name="AboutActivity_tag_community">المجتمع</string>

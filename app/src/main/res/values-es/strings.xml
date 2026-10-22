@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Grabador de Pantalla</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">Acerca de</string>
     <string name="AboutActivity_title">Acerca de</string>
     <string name="AboutActivity_desc_avatar">Foto de perfil</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">Perfil de correo electrónico</string>
     <string name="AboutActivity_desc_update">Buscar actualizaciones</string>
     <string name="AboutActivity_version_format">Versión %1$s</string>
-    <string name="AboutActivity_app_title">Grabador de Pantalla</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Un grabador de pantalla de código abierto diseñado para brindar claridad, rendimiento y total privacidad del usuario en Android.</string>
     <string name="AboutActivity_tag_open_source">Código Abierto</string>
     <string name="AboutActivity_tag_community">Comunidad</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ekran Kaydedici</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">Hakkında</string>
     <string name="AboutActivity_title">Hakkında</string>
     <string name="AboutActivity_desc_avatar">Profil Resmi</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">E-posta Gönder</string>
     <string name="AboutActivity_desc_update">Güncellemeleri Denetle</string>
     <string name="AboutActivity_version_format">Sürüm %1$s</string>
-    <string name="AboutActivity_app_title">Ekran Kaydedici</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Material 3 Expressive tasarım standartlarıyla geliştirilmiş, modern ve açık kaynaklı ekran kaydedici.</string>
     <string name="AboutActivity_tag_open_source">Açık Kaynak</string>
     <string name="AboutActivity_tag_community">Topluluk</string>

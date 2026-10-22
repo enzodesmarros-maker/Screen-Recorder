@@ -8,6 +8,8 @@ import android.os.SystemClock
 import com.haseeb.recorder.camera.CameraOverlayService
 import com.haseeb.recorder.draw.DrawOverlayService
 import com.haseeb.recorder.ui.activity.CameraPermissionActivity
+import com.haseeb.recorder.util.AppLog
+import com.haseeb.recorder.util.MainThreadWatchdog
 import java.util.concurrent.CopyOnWriteArrayList
 
 /*
@@ -112,6 +114,8 @@ object RecordingStateManager {
         recordingStartRealtime = startTimeRealtime
         pauseStartRealtime = 0L
         totalPausedDurationMs = 0L
+        AppLog.i("Recording", "Recording started (muted=$initialMuted)")
+        MainThreadWatchdog.acquire()
         notifyListeners()
     }
 
@@ -122,6 +126,7 @@ object RecordingStateManager {
         if (!isRecording || isPaused) return
         isPaused = true
         pauseStartRealtime = SystemClock.elapsedRealtime()
+        AppLog.i("Recording", "Recording paused")
         notifyListeners()
     }
 
@@ -134,6 +139,7 @@ object RecordingStateManager {
         totalPausedDurationMs += (now - pauseStartRealtime).coerceAtLeast(0L)
         isPaused = false
         pauseStartRealtime = 0L
+        AppLog.i("Recording", "Recording resumed")
         notifyListeners()
     }
 
@@ -149,12 +155,15 @@ object RecordingStateManager {
      * Resets all internal tracking states when recording finishes.
      */
     fun onRecordingStopped() {
+        val wasRecording = isRecording
+        AppLog.i("Recording", "Recording stopped after ${getElapsedMillis() / 1000}s of capture")
         isRecording = false
         isPaused = false
         isMuted = false
         recordingStartRealtime = 0L
         pauseStartRealtime = 0L
         totalPausedDurationMs = 0L
+        if (wasRecording) MainThreadWatchdog.release()
         notifyListeners()
     }
 

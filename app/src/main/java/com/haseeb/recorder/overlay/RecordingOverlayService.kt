@@ -21,6 +21,8 @@ import com.haseeb.recorder.data.ConfigManager
 import com.haseeb.recorder.recording.RecordingStateManager
 import com.haseeb.recorder.ui.activity.MainActivity
 import com.haseeb.recorder.ui.activity.TileRecordingPermissionActivity
+import com.haseeb.recorder.util.AppLog
+import com.haseeb.recorder.util.MainThreadWatchdog
 
 /*
  * Main overlay controller service orchestrating recording session state and decoupled floating window UIs.
@@ -69,6 +71,8 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     override fun onCreate() {
         super.onCreate()
         isRunning = true
+        AppLog.i("Overlay", "Overlay service created (pinned=${ConfigManager(this).isBubblePinned})")
+        MainThreadWatchdog.acquire()
         configManager = ConfigManager(this)
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
@@ -149,6 +153,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
      */
     private fun attachOverlayWindow(style: String) {
         val wm = windowManager ?: return
+        AppLog.d("Overlay", "Showing recording controls (style=$style)")
         currentWindow?.dismiss()
         val window: RecordingOverlayWindow = if (style == ConfigManager.OVERLAY_STYLE_RADIAL) {
             RadialOverlayWindow(this, wm, this)
@@ -166,6 +171,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     private fun attachIdleBubble() {
         val wm = windowManager ?: return
         currentWindow?.dismiss()
+        AppLog.d("Overlay", "Showing idle bubble")
         val window = IdleBubbleWindow(
             this, wm,
             onStartClicked = { startRecordingFromBubble() },
@@ -192,6 +198,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
      * Updates overlay style or control visibility dynamically without restarting recording.
      */
     private fun handleOverlayConfigChange() {
+        AppLog.d("Overlay", "Overlay config changed")
         if (!configManager.isRecordingOverlayEnabled) {
             stopSelf()
             return
@@ -217,6 +224,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
      * Dismisses the bubble completely (dragged onto the X): stops the service and unpins it.
      */
     private fun removeBubbleForGood() {
+        AppLog.i("Overlay", "Bubble removed with the X")
         configManager.isBubblePinned = false
         stopSelf()
     }
@@ -385,6 +393,8 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false
+        AppLog.i("Overlay", "Overlay service destroyed")
+        MainThreadWatchdog.release()
         RecordingStateManager.removeListener(this)
 
         try {

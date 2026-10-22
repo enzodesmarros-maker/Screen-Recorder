@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ import com.haseeb.recorder.shizuku.ShizukuManager
 import com.haseeb.recorder.privileged.PrivilegedAccessManager
 import com.haseeb.recorder.recording.RecordingStateManager
 import com.haseeb.recorder.ui.activity.AboutActivity
+import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.util.BubbleIconStore
 import com.haseeb.recorder.util.LocaleHelper
 import kotlinx.coroutines.Dispatchers
@@ -71,6 +73,8 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             }
         }
     }
+
+    private var lastBubbleApplyMs = 0L
 
     private val bubbleImagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -145,6 +149,7 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
         validateRadialStyleAvailability()
 
         binding.switchDynamicColors.isChecked = configManager.isDynamicColorsEnabled
+        binding.switchAmoled.isChecked = configManager.isAmoledEnabled
         binding.switchPauseOnScreenOff.isChecked = configManager.isPauseOnScreenOff
         updatePauseOnScreenOffUI(configManager.isPauseOnScreenOff)
 
@@ -485,8 +490,17 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             updateBubblePreview()
             notifyOverlayConfigChanged()
         }
-        binding.sliderBubbleSize.addOnChangeListener { _, value, _ ->
+        binding.sliderBubbleSize.addOnChangeListener { _, value, fromUser ->
             binding.tvBubbleSizeValue.text = getString(R.string.sheet_settings_bubble_size_value_fmt, value.toInt())
+            if (fromUser) {
+                // Live preview on the running bubble, throttled so the window is not rebuilt on every step.
+                configManager.bubbleSizeDp = value.toInt()
+                val now = SystemClock.uptimeMillis()
+                if (now - lastBubbleApplyMs > 150L) {
+                    lastBubbleApplyMs = now
+                    notifyOverlayConfigChanged()
+                }
+            }
         }
         binding.sliderBubbleSize.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {}
@@ -516,6 +530,21 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
         binding.btnResetStorage.setOnClickListener {
             configManager.customStorageUri = null
             updateStorageUI()
+        }
+
+        updateLogsToggleUi()
+        binding.cardShareLogs.setOnClickListener { shareLogs() }
+        binding.cardToggleLogs.setOnClickListener {
+            AppLog.setEnabled(requireContext(), !AppLog.enabled)
+            updateLogsToggleUi()
+        }
+
+        binding.cardAmoled.setOnClickListener { binding.switchAmoled.toggle() }
+        binding.switchAmoled.setOnCheckedChangeListener { _, isChecked ->
+            if (configManager.isAmoledEnabled != isChecked) {
+                configManager.isAmoledEnabled = isChecked
+                requireActivity().recreate()
+            }
         }
 
         binding.cardDynamicColors.setOnClickListener { binding.switchDynamicColors.toggle() }
@@ -808,8 +837,50 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
     /*
      * Broadcasts overlay settings modification to ensure live active overlays update dynamically.
      */
+    /*
+     * Builds the merged log file off the main thread and opens the system share sheet.
+     */
+    private fun shareLogs() {
+        val ctx = requireContext().applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            val file = withContext(Dispatchers.IO) { AppLog.buildShareFile(ctx) }
+            if (file == null) {
+                Toast.makeText(ctx, getString(R.string.sheet_settings_logs_empty), Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            try {
+                val uri = androidx.core.content.FileProvider.getUriForFile(ctx, "${ctx.packageName}.logs", file)
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " logs")
+                    clipData = android.content.ClipData.newRawUri("", uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(send, getString(R.string.sheet_settings_logs_share_title)))
+            } catch (e: Exception) {
+                AppLog.w("Settings", "Could not share logs", e)
+                Toast.makeText(ctx, getString(R.string.sheet_settings_logs_failed), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    /*
+     * Shows whether logging is on and what tapping the card will do.
+     */
+    private fun updateLogsToggleUi() {
+        val on = AppLog.enabled
+        binding.tvToggleLogsTitle.text = getString(
+            if (on) R.string.sheet_settings_logs_off_title else R.string.sheet_settings_logs_on_title
+        )
+        binding.tvToggleLogsSummary.text = getString(
+            if (on) R.string.sheet_settings_logs_on_summary else R.string.sheet_settings_logs_off_summary
+        )
+    }
+
     private fun notifyOverlayConfigChanged() {
         val ctx = context ?: return
+        AppLog.d("Settings", "Overlay-related setting changed")
         if (configManager.isRecordingOverlayEnabled) {
             if (ScreenRecordService.isRecording) {
                 ctx.startService(Intent(ctx, RecordingOverlayService::class.java))
@@ -817,7 +888,8 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
         } else {
             ctx.stopService(Intent(ctx, RecordingOverlayService::class.java))
         }
-        ctx.sendBroadcast(Intent(RecordingOverlayService.ACTION_OVERLAY_CONFIG_CHANGED))
+        // Explicit package: implicit broadcasts are not delivered to non-exported receivers on recent Android.
+        ctx.sendBroadcast(Intent(RecordingOverlayService.ACTION_OVERLAY_CONFIG_CHANGED).setPackage(ctx.packageName))
     }
 
     /*

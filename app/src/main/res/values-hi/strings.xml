@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">स्क्रीन रिकॉर्डर</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">ऐप के बारे में</string>
     <string name="AboutActivity_title">ऐप के बारे में</string>
     <string name="AboutActivity_desc_avatar">प्रोफ़ाइल फ़ोटो</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">ईमेल भेजें</string>
     <string name="AboutActivity_desc_update">अपडेट चेक करें</string>
     <string name="AboutActivity_version_format">वर्शन %1$s</string>
-    <string name="AboutActivity_app_title">स्क्रीन रिकॉर्डर</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">आधुनिक, ओपन-सोर्स स्क्रीन रिकॉर्डर ऐप जिसे Material 3 Expressive डिज़ाइन मानकों के साथ तैयार किया गया है।</string>
     <string name="AboutActivity_tag_open_source">ओपन सोर्स</string>
     <string name="AboutActivity_tag_community">कम्युनिटी</string>

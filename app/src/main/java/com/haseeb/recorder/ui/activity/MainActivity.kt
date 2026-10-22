@@ -18,9 +18,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.Job
 import com.haseeb.recorder.R
 import com.haseeb.recorder.compress.CompressionService
+import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.data.ConfigManager
 import com.haseeb.recorder.overlay.RecordingOverlayService
 import com.haseeb.recorder.data.VideoFile
@@ -55,10 +59,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var lastSettingsClickMs = 0L
+    private var loadJob: Job? = null
+    private var reloadPending = false
+    private val reloadHandler = Handler(Looper.getMainLooper())
+    private val reloadRunnable = Runnable {
+        if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            AppLog.d("MainList", "MediaStore changed: reloading list")
+            loadVideos()
+        } else {
+            reloadPending = true
+        }
+    }
+
+    /*
+     * MediaStore fires a burst of change events when a recording is saved. Wait for the burst to settle and
+     * reload once (and only while the screen is visible) instead of reloading the whole list for every event.
+     */
     private val videoObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
-            loadVideos()
+            reloadHandler.removeCallbacks(reloadRunnable)
+            reloadHandler.postDelayed(reloadRunnable, 1000L)
         }
     }
 
@@ -145,6 +167,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSettings.setOnClickListener {
+            // Ignore extra taps: show() is asynchronous, so a fast double tap used to open two sheets.
+            val now = SystemClock.uptimeMillis()
+            if (now - lastSettingsClickMs < 800L ||
+                supportFragmentManager.isStateSaved ||
+                supportFragmentManager.findFragmentByTag("SettingsBottomSheet") != null
+            ) {
+                return@setOnClickListener
+            }
+            lastSettingsClickMs = now
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             SettingsBottomSheet.newInstance().show(supportFragmentManager, "SettingsBottomSheet")
         }
@@ -225,7 +256,9 @@ class MainActivity : AppCompatActivity() {
      */
     @SuppressLint("Range")
     private fun loadVideos() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        loadJob?.cancel()
+        loadJob = lifecycleScope.launch(Dispatchers.IO) {
+            val loadStart = SystemClock.elapsedRealtime()
             val videos = mutableListOf<VideoFile>()
             val projection = arrayOf(
                 MediaStore.Video.Media._ID,
@@ -316,6 +349,7 @@ class MainActivity : AppCompatActivity() {
             if (videos.isNotEmpty()) {
                 var hasUpdates = false
                 val enrichedVideos = videos.map { video ->
+                    ensureActive()
                     val (extractedDuration, qualityFps) = VideoMetadataUtils.extractMetadata(this@MainActivity, video.uri)
                     val finalDuration = if (extractedDuration > 0L) extractedDuration else video.duration
                     if (finalDuration != video.duration || qualityFps != video.qualityFps) {
@@ -331,6 +365,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            AppLog.d("MainList", "Video list loaded: ${videos.size} items in ${SystemClock.elapsedRealtime() - loadStart}ms")
         }
     }
 
@@ -359,6 +394,10 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         syncRecordingUi()
         syncBubbleButton()
+        if (reloadPending) {
+            reloadPending = false
+            loadVideos()
+        }
     }
 
     /*
@@ -399,6 +438,7 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onDestroy() {
         super.onDestroy()
+        reloadHandler.removeCallbacks(reloadRunnable)
         contentResolver.unregisterContentObserver(videoObserver)
         unregisterReceiver(recordingStateReceiver)
     }

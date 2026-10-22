@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bildschirmrekorder</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">Über</string>
     <string name="AboutActivity_title">Über</string>
     <string name="AboutActivity_desc_avatar">Profilbild</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">E-Mail-Profil</string>
     <string name="AboutActivity_desc_update">Nach Updates suchen</string>
     <string name="AboutActivity_version_format">Version %1$s</string>
-    <string name="AboutActivity_app_title">Bildschirmrekorder</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Ein Open-Source-Bildschirmrekorder für Android, entwickelt für maximale Klarheit, Leistung und vollständige Privatsphäre.</string>
     <string name="AboutActivity_tag_open_source">Open Source</string>
     <string name="AboutActivity_tag_community">Community</string>

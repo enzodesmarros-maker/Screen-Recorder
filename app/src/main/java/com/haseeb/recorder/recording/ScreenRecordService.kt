@@ -16,6 +16,7 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.*
+import com.haseeb.recorder.util.AppLog
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
@@ -208,12 +209,20 @@ class ScreenRecordService : Service() {
 
         val widthRatio = screenWidth.toFloat() / physicalMaxRes.first.toFloat()
         scaledDensity = (screenDensity * widthRatio).toInt().coerceAtLeast(120)
+        AppLog.i(
+            "RecService",
+            "Starting capture ${screenWidth}x$screenHeight (screen ${physicalMaxRes.first}x${physicalMaxRes.second}) " +
+                "quality=${configManager.videoQuality} fps=${configManager.videoFps} bitrate=${configManager.videoBitrate} " +
+                "codec=${configManager.videoEncoder} orientation=${configManager.videoOrientation} " +
+                "mic=${configManager.isMicEnabled} sysAudio=${configManager.isSystemAudioEnabled}"
+        )
     }
 
     /*
      * Intercepts service commands to control the recording lifecycle.
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        AppLog.d("RecService", "onStartCommand action=${intent?.action}")
         when (intent?.action) {
             ACTION_START -> {
                 val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, -1)
@@ -793,6 +802,8 @@ class ScreenRecordService : Service() {
      */
      private fun stopRecording() {
         if (!isRecording) return
+        val stopStart = SystemClock.elapsedRealtime()
+        AppLog.i("RecService", "stopRecording begin (on thread ${Thread.currentThread().name})")
         virtualDisplay?.setSurface(null)
         rotationRenderer?.close()
         rotationRenderer = null
@@ -810,13 +821,25 @@ class ScreenRecordService : Service() {
 
         try { micRecord?.stop() } catch (_: Exception) {}
         try { sysRecord?.stop() } catch (_: Exception) {}
+        val joinStart = SystemClock.elapsedRealtime()
         try { audioRecordingThread?.join(1000) } catch (_: Exception) {}
+        val audioJoined = SystemClock.elapsedRealtime() - joinStart
         try { videoEncoderThread?.join(1000) } catch (_: Exception) {}
-        try { if (muxerStarted) mediaMuxer?.stop() } catch (_: Exception) {}
+        val videoJoined = SystemClock.elapsedRealtime() - joinStart - audioJoined
+        val muxStart = SystemClock.elapsedRealtime()
+        try { if (muxerStarted) mediaMuxer?.stop() } catch (e: Exception) {
+            AppLog.w("RecService", "muxer.stop failed", e)
+        }
+        val muxStopped = SystemClock.elapsedRealtime() - muxStart
 
         cleanup()
         isRecording = false
         sendStateBroadcast(STATE_STOP)
+        AppLog.i(
+            "RecService",
+            "stopRecording done in ${SystemClock.elapsedRealtime() - stopStart}ms " +
+                "(wait audio=${audioJoined}ms, wait video=${videoJoined}ms, muxer stop=${muxStopped}ms) - this runs on the main thread"
+        )
     }
 
     /*

@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">Perfil de e-mail</string>
     <string name="AboutActivity_desc_update">Verificar atualizações</string>
     <string name="AboutActivity_version_format">Versão %1$s</string>
-    <string name="AboutActivity_app_title">Gravador de Tela</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Um gravador de tela de código aberto projetado para clareza, desempenho e total privacidade do usuário no Android.</string>
     <string name="AboutActivity_tag_open_source">Código Aberto</string>
     <string name="AboutActivity_tag_community">Comunidade</string>
@@ -356,4 +356,15 @@
     <string name="sheet_settings_bubble_dock_left">Esquerda</string>
     <string name="sheet_settings_bubble_dock_right">Direita</string>
     <string name="overlay_bubble_remove">Remover bolinha</string>
+    <string name="sheet_settings_amoled_title">Modo AMOLED</string>
+    <string name="sheet_settings_amoled_summary">Fundo preto puro no tema escuro. Economiza bateria em telas OLED.</string>
+    <string name="sheet_settings_diag_header">Diagnóstico</string>
+    <string name="sheet_settings_logs_share_title">Compartilhar logs</string>
+    <string name="sheet_settings_logs_share_summary">Envie o registro técnico do app para ajudar a achar problemas</string>
+    <string name="sheet_settings_logs_off_title">Desligar registros de logs</string>
+    <string name="sheet_settings_logs_on_title">Ligar registros de logs</string>
+    <string name="sheet_settings_logs_on_summary">Registrando agora. Toque para desligar.</string>
+    <string name="sheet_settings_logs_off_summary">Registro desligado. Toque para ligar.</string>
+    <string name="sheet_settings_logs_empty">Ainda não há logs registrados.</string>
+    <string name="sheet_settings_logs_failed">Não foi possível preparar os logs.</string>
 </resources>

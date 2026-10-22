@@ -32,6 +32,9 @@ class ConfigManager(private val context: Context) {
         const val KEY_VIDEO_BITRATE = "video_bitrate"
         const val KEY_VIDEO_ENCODER = "video_encoder"
         const val KEY_VIDEO_ORIENTATION = "video_orientation"
+        const val KEY_AMOLED = "amoled_mode"
+        const val KEY_LOGGING = "diagnostic_logging"
+        const val DEFAULT_LOGGING_ENABLED = true
         const val KEY_BUBBLE_SIZE_DP = "bubble_size_dp"
         const val KEY_BUBBLE_DOCK = "bubble_dock"
         const val KEY_BUBBLE_PINNED = "bubble_pinned"
@@ -160,6 +163,16 @@ class ConfigManager(private val context: Context) {
     var isDynamicColorsEnabled: Boolean
         get() = prefs.getBoolean(KEY_DYNAMIC_COLORS, DEFAULT_DYNAMIC_COLORS)
         set(value) = prefs.edit().putBoolean(KEY_DYNAMIC_COLORS, value).apply()
+
+    /* Pure black backgrounds in dark theme (saves battery on OLED screens). */
+    /* App-wide diagnostic logging (technical info only). */
+    var isLoggingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_LOGGING, DEFAULT_LOGGING_ENABLED)
+        set(value) = prefs.edit().putBoolean(KEY_LOGGING, value).apply()
+
+    var isAmoledEnabled: Boolean
+        get() = prefs.getBoolean(KEY_AMOLED, false)
+        set(value) = prefs.edit().putBoolean(KEY_AMOLED, value).apply()
 
     var appLanguage: String
         get() = prefs.getString(KEY_APP_LANGUAGE, DEFAULT_APP_LANGUAGE) ?: DEFAULT_APP_LANGUAGE

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">画面録画</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">アプリ情報</string>
     <string name="AboutActivity_title">アプリ情報</string>
     <string name="AboutActivity_desc_avatar">プロフィール写真</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">メールアドレス</string>
     <string name="AboutActivity_desc_update">アップデートを確認</string>
     <string name="AboutActivity_version_format">バージョン %1$s</string>
-    <string name="AboutActivity_app_title">画面録画</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Android向けに高画質、高性能、完全なプライバシーを重視して設計されたオープンソースの画面録画アプリ。</string>
     <string name="AboutActivity_tag_open_source">オープンソース</string>
     <string name="AboutActivity_tag_community">コミュニティ</string>

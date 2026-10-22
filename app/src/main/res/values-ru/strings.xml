@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Запись экрана</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">О приложении</string>
     <string name="AboutActivity_title">О приложении</string>
     <string name="AboutActivity_desc_avatar">Фото профиля</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">Отправить Email</string>
     <string name="AboutActivity_desc_update">Проверить обновления</string>
     <string name="AboutActivity_version_format">Версия %1$s</string>
-    <string name="AboutActivity_app_title">Запись экрана</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Современное приложение для записи экрана с открытым исходным кодом, созданное по стандартам Material 3 Expressive.</string>
     <string name="AboutActivity_tag_open_source">Открытый исходный код</string>
     <string name="AboutActivity_tag_community">Сообщество</string>

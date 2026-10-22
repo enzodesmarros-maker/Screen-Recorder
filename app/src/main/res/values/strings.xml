@@ -20,7 +20,7 @@
     <string name="AboutActivity_desc_email">Email profile</string>
     <string name="AboutActivity_desc_update">Check for updates</string>
     <string name="AboutActivity_version_format">Version %1$s</string>
-    <string name="AboutActivity_app_title">Screen Recorder</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">An open-source screen recorder designed for clarity, performance, and complete user privacy on Android.</string>
     <string name="AboutActivity_tag_open_source">Open Source</string>
     <string name="AboutActivity_tag_community">Community</string>
@@ -403,4 +403,15 @@
     <string name="sheet_settings_bubble_dock_left">Left</string>
     <string name="sheet_settings_bubble_dock_right">Right</string>
     <string name="overlay_bubble_remove">Remove bubble</string>
+    <string name="sheet_settings_amoled_title">AMOLED mode</string>
+    <string name="sheet_settings_amoled_summary">Pure black background in dark theme. Saves battery on OLED screens.</string>
+    <string name="sheet_settings_diag_header">Diagnostics</string>
+    <string name="sheet_settings_logs_share_title">Share logs</string>
+    <string name="sheet_settings_logs_share_summary">Send the app\'s technical log to help find problems</string>
+    <string name="sheet_settings_logs_off_title">Turn off logging</string>
+    <string name="sheet_settings_logs_on_title">Turn on logging</string>
+    <string name="sheet_settings_logs_on_summary">Logging is on. Tap to turn it off.</string>
+    <string name="sheet_settings_logs_off_summary">Logging is off. Tap to turn it on.</string>
+    <string name="sheet_settings_logs_empty">No logs recorded yet.</string>
+    <string name="sheet_settings_logs_failed">Could not prepare the logs.</string>
 </resources>

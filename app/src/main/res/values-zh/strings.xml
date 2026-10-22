@@ -7,7 +7,7 @@
     <string name="privileged_root_requesting">等待 Root 授权…</string>
     <string name="privileged_root_granted">已获得 Root 权限</string>
     <string name="privileged_root_unavailable">Root 不可用或授权被拒绝，点击重试</string>
-    <string name="app_name">屏幕录制</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">关于</string>
     <string name="AboutActivity_title">关于</string>
     <string name="AboutActivity_desc_avatar">个人头像</string>
@@ -17,7 +17,7 @@
     <string name="AboutActivity_desc_email">发送邮件</string>
     <string name="AboutActivity_desc_update">检查更新</string>
     <string name="AboutActivity_version_format">版本 %1$s</string>
-    <string name="AboutActivity_app_title">屏幕录制</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">现代化、开源的屏幕录制应用，基于 Material 3 Expressive 设计规范精心打造。</string>
     <string name="AboutActivity_tag_open_source">开源</string>
     <string name="AboutActivity_tag_community">社区</string>

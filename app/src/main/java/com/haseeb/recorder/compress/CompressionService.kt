@@ -17,7 +17,9 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.haseeb.recorder.R
 import com.haseeb.recorder.ui.activity.MainActivity
+import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.util.CompressedVideoStore
+import com.haseeb.recorder.util.MainThreadWatchdog
 import com.haseeb.recorder.util.VideoCompressor
 import java.io.File
 
@@ -112,6 +114,8 @@ class CompressionService : Service() {
         val durationMs = intent.getLongExtra(EXTRA_DURATION, 0L)
 
         acquireWakeLock()
+        MainThreadWatchdog.acquire()
+        AppLog.i("Compress", "Starting compression: preset=${preset.name} size=${originalSize / 1024} KB duration=${durationMs}ms")
 
         val c = VideoCompressor(applicationContext)
         compressor = c
@@ -119,12 +123,14 @@ class CompressionService : Service() {
             override fun onProgress(percent: Int) {
                 if (percent == lastPercent) return
                 lastPercent = percent
+                if (percent % 10 == 0) AppLog.d("Compress", "Progress $percent%")
                 notifyManager(NOTIFICATION_ID, buildProgressNotification(percent))
             }
 
             override fun onSuccess(output: File) {
                 Thread {
                     val newSize = output.length()
+                    AppLog.i("Compress", "Compression finished: ${originalSize / 1024} KB -> ${newSize / 1024} KB")
                     if (newSize <= 0L || (originalSize > 0L && newSize >= originalSize)) {
                         output.delete()
                         showDone(getString(R.string.CompressionService_done_title), getString(R.string.VideoAdapter_compress_toast_not_smaller))
@@ -149,6 +155,7 @@ class CompressionService : Service() {
             }
 
             override fun onError(message: String) {
+                AppLog.e("Compress", "Compression failed: $message")
                 showDone(getString(R.string.CompressionService_done_title), getString(R.string.VideoAdapter_compress_toast_failed))
                 finishJob()
             }
@@ -161,6 +168,7 @@ class CompressionService : Service() {
     }
 
     private fun finishJob() {
+        if (isRunning) MainThreadWatchdog.release()
         isRunning = false
         compressor = null
         releaseWakeLock()
@@ -172,7 +180,10 @@ class CompressionService : Service() {
     }
 
     override fun onDestroy() {
-        if (isRunning) compressor?.cancel()
+        if (isRunning) {
+            compressor?.cancel()
+            MainThreadWatchdog.release()
+        }
         isRunning = false
         releaseWakeLock()
         super.onDestroy()

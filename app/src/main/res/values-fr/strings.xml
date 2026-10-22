@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Enregistreur d\'écran</string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">À propos</string>
     <string name="AboutActivity_title">À propos</string>
     <string name="AboutActivity_desc_avatar">Photo de profil</string>
@@ -10,7 +10,7 @@
     <string name="AboutActivity_desc_email">Profil e-mail</string>
     <string name="AboutActivity_desc_update">Vérifier les mises à jour</string>
     <string name="AboutActivity_version_format">Version %1$s</string>
-    <string name="AboutActivity_app_title">Enregistreur d\'écran</string>
+    <string name="AboutActivity_app_title">Screen Cats</string>
     <string name="AboutActivity_app_description">Un enregistreur d\'écran open-source conçu pour la clarté, la performance et la confidentialité totale de l\'utilisateur sur Android.</string>
     <string name="AboutActivity_tag_open_source">Open Source</string>
     <string name="AboutActivity_tag_community">Communauté</string>
