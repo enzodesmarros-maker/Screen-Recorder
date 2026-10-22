@@ -11,6 +11,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.IBinder
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
@@ -82,6 +84,13 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
         }
 
         syncWindowWithState()
+
+        // If started for a recording that never begins (and the bubble is not pinned), stop instead of idling.
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!RecordingStateManager.isRecording && !configManager.isBubblePinned && currentKind == WINDOW_NONE) {
+                stopSelf()
+            }
+        }, 15_000L)
     }
 
     /*
@@ -89,6 +98,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_CLOSE_BUBBLE) {
+            configManager.isBubblePinned = false
             stopSelf()
             return START_NOT_STICKY
         }
@@ -117,9 +127,13 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
                 currentStyle = resolveRecordingStyle()
                 attachOverlayWindow(currentStyle)
             }
-        } else if (currentKind != WINDOW_IDLE) {
-            attachIdleBubble()
+        } else if (configManager.isBubblePinned) {
+            if (currentKind != WINDOW_IDLE) attachIdleBubble()
+        } else if (currentKind == WINDOW_RECORDING) {
+            // Recording ended and the user never pinned the bubble: this service was only for recording.
+            stopSelf()
         }
+        // Otherwise: started for a recording that has not begun yet; wait for it.
     }
 
     /*
@@ -152,7 +166,11 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     private fun attachIdleBubble() {
         val wm = windowManager ?: return
         currentWindow?.dismiss()
-        val window = IdleBubbleWindow(this, wm) { startRecordingFromBubble() }
+        val window = IdleBubbleWindow(
+            this, wm,
+            onStartClicked = { startRecordingFromBubble() },
+            onRemoveRequested = { removeBubbleForGood() }
+        )
         currentWindow = window
         currentKind = WINDOW_IDLE
         window.show()
@@ -187,9 +205,28 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
             } else {
                 currentWindow?.onConfigurationChanged()
             }
+        } else if (currentKind == WINDOW_IDLE) {
+            // Size, image or docking may have changed: rebuild the bubble.
+            attachIdleBubble()
         } else {
             syncWindowWithState()
         }
+    }
+
+    /*
+     * Dismisses the bubble completely (dragged onto the X): stops the service and unpins it.
+     */
+    private fun removeBubbleForGood() {
+        configManager.isBubblePinned = false
+        stopSelf()
+    }
+
+    /*
+     * Keeps the idle bubble inside the screen after a rotation.
+     */
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (currentKind == WINDOW_IDLE) attachIdleBubble()
     }
 
     /*

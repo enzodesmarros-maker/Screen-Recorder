@@ -8,13 +8,16 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.google.android.material.slider.Slider
 import com.haseeb.recorder.R
 import com.haseeb.recorder.data.ConfigManager
 import com.haseeb.recorder.databinding.SheetSettingsBinding
@@ -24,7 +27,11 @@ import com.haseeb.recorder.shizuku.ShizukuManager
 import com.haseeb.recorder.privileged.PrivilegedAccessManager
 import com.haseeb.recorder.recording.RecordingStateManager
 import com.haseeb.recorder.ui.activity.AboutActivity
+import com.haseeb.recorder.util.BubbleIconStore
 import com.haseeb.recorder.util.LocaleHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
  * Manages the settings bottom sheet dialog.
@@ -61,6 +68,22 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             } catch (e: Exception) {
                 configManager.customStorageUri = treeUri.toString()
                 updateStorageUI()
+            }
+        }
+    }
+
+    private val bubbleImagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri == null) return@registerForActivityResult
+        val appContext = requireContext().applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            val saved = withContext(Dispatchers.IO) { BubbleIconStore.saveFromUri(appContext, uri) }
+            if (saved) {
+                if (_binding != null) updateBubblePreview()
+                notifyOverlayConfigChanged()
+            } else {
+                Toast.makeText(appContext, getString(R.string.sheet_settings_bubble_icon_failed), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -200,6 +223,17 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             else -> R.id.btnOrientationAuto
         }
         binding.buttonGroupOrientation.check(orientationButtonId)
+
+        binding.sliderBubbleSize.value = configManager.bubbleSizeDp.toFloat()
+        binding.tvBubbleSizeValue.text = getString(R.string.sheet_settings_bubble_size_value_fmt, configManager.bubbleSizeDp)
+        binding.buttonGroupBubbleDock.check(
+            when (configManager.bubbleDock) {
+                ConfigManager.BUBBLE_DOCK_LEFT -> R.id.btnBubbleDockLeft
+                ConfigManager.BUBBLE_DOCK_RIGHT -> R.id.btnBubbleDockRight
+                else -> R.id.btnBubbleDockFree
+            }
+        )
+        updateBubblePreview()
 
         updateStorageUI()
 
@@ -445,6 +479,34 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             }
         }
 
+        binding.btnBubbleIconChoose.setOnClickListener { bubbleImagePickerLauncher.launch("image/*") }
+        binding.btnBubbleIconReset.setOnClickListener {
+            BubbleIconStore.clear(requireContext())
+            updateBubblePreview()
+            notifyOverlayConfigChanged()
+        }
+        binding.sliderBubbleSize.addOnChangeListener { _, value, _ ->
+            binding.tvBubbleSizeValue.text = getString(R.string.sheet_settings_bubble_size_value_fmt, value.toInt())
+        }
+        binding.sliderBubbleSize.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {}
+            override fun onStopTrackingTouch(slider: Slider) {
+                configManager.bubbleSizeDp = slider.value.toInt()
+                updateBubblePreview()
+                notifyOverlayConfigChanged()
+            }
+        })
+        binding.buttonGroupBubbleDock.addOnButtonCheckedListener { _: MaterialButtonToggleGroup, checkedId: Int, isChecked: Boolean ->
+            if (isChecked) {
+                configManager.bubbleDock = when (checkedId) {
+                    R.id.btnBubbleDockLeft -> ConfigManager.BUBBLE_DOCK_LEFT
+                    R.id.btnBubbleDockRight -> ConfigManager.BUBBLE_DOCK_RIGHT
+                    else -> ConfigManager.BUBBLE_DOCK_FREE
+                }
+                notifyOverlayConfigChanged()
+            }
+        }
+
         binding.cardStorageLocation.setOnClickListener {
             storagePickerLauncher.launch(null)
         }
@@ -555,6 +617,33 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
     /*
      * Filters and displays supported quality buttons according to device screen resolution.
      */
+    /*
+     * Shows the current bubble image (custom or default) in the settings preview.
+     */
+    private fun updateBubblePreview() {
+        val preview = binding.imgBubblePreview
+        val custom = BubbleIconStore.load(requireContext())
+        preview.background = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.OVAL
+            setColor(0xE6D32F2F.toInt())
+        }
+        if (custom != null) {
+            preview.setPadding(0, 0, 0, 0)
+            preview.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            preview.outlineProvider = android.view.ViewOutlineProvider.BACKGROUND
+            preview.clipToOutline = true
+            preview.clearColorFilter()
+            preview.setImageBitmap(custom)
+        } else {
+            val pad = (12 * resources.displayMetrics.density).toInt()
+            preview.setPadding(pad, pad, pad, pad)
+            preview.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+            preview.setImageResource(R.drawable.ic_screen_record)
+            preview.setColorFilter(android.graphics.Color.WHITE)
+        }
+        binding.btnBubbleIconReset.isEnabled = custom != null
+    }
+
     private fun setupDynamicQualities() {
         binding.btnQualityMax.text = configManager.getMaxQualityLabel()
         val supported = configManager.getAvailableQualityOptions()

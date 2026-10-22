@@ -8,7 +8,7 @@
     <string name="privileged_root_granted">Root access authorized</string>
     <string name="privileged_root_unavailable">Root unavailable or denied — tap to retry</string>
 
-    <string name="app_name">Screen Cats</string>
+    <string name="app_name">Screen Recorder</string>
 
     <string name="activity_about_title">About</string>
     
@@ -389,4 +389,18 @@
     <string name="overlay_bubble_notif_title">Floating record button is active</string>
     <string name="overlay_bubble_notif_text">Tap the bubble to start recording at any time.</string>
     <string name="overlay_bubble_notif_close">Close bubble</string>
+    <string name="sheet_settings_bubble_header">Floating bubble</string>
+    <string name="sheet_settings_bubble_icon_title">Bubble image</string>
+    <string name="sheet_settings_bubble_icon_summary">Use your own photo as the bubble</string>
+    <string name="sheet_settings_bubble_icon_choose">Choose image</string>
+    <string name="sheet_settings_bubble_icon_reset">Default</string>
+    <string name="sheet_settings_bubble_icon_failed">Could not use this image.</string>
+    <string name="sheet_settings_bubble_size_title">Bubble size</string>
+    <string name="sheet_settings_bubble_size_value_fmt">%1$d dp</string>
+    <string name="sheet_settings_bubble_dock_title">Stick to the edge</string>
+    <string name="sheet_settings_bubble_dock_summary">When you let go, the bubble sticks to the chosen side</string>
+    <string name="sheet_settings_bubble_dock_free">Free</string>
+    <string name="sheet_settings_bubble_dock_left">Left</string>
+    <string name="sheet_settings_bubble_dock_right">Right</string>
+    <string name="overlay_bubble_remove">Remove bubble</string>
 </resources>

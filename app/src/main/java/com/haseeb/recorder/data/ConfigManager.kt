@@ -32,6 +32,15 @@ class ConfigManager(private val context: Context) {
         const val KEY_VIDEO_BITRATE = "video_bitrate"
         const val KEY_VIDEO_ENCODER = "video_encoder"
         const val KEY_VIDEO_ORIENTATION = "video_orientation"
+        const val KEY_BUBBLE_SIZE_DP = "bubble_size_dp"
+        const val KEY_BUBBLE_DOCK = "bubble_dock"
+        const val KEY_BUBBLE_PINNED = "bubble_pinned"
+        const val DEFAULT_BUBBLE_SIZE_DP = 52
+        const val MIN_BUBBLE_SIZE_DP = 36
+        const val MAX_BUBBLE_SIZE_DP = 96
+        const val BUBBLE_DOCK_FREE = "free"
+        const val BUBBLE_DOCK_LEFT = "left"
+        const val BUBBLE_DOCK_RIGHT = "right"
         const val KEY_CUSTOM_STORAGE_URI = "custom_storage_uri"
         const val KEY_SHOW_TOUCHES = "show_touches"
         const val KEY_THEME_MODE = "theme_mode"
@@ -171,6 +180,20 @@ class ConfigManager(private val context: Context) {
     var countdownSeconds: Int
         get() = prefs.getInt(KEY_COUNTDOWN_SECONDS, DEFAULT_COUNTDOWN_SECONDS)
         set(value) = prefs.edit().putInt(KEY_COUNTDOWN_SECONDS, value).apply()
+
+    /* Floating bubble appearance and behavior. */
+    var bubbleSizeDp: Int
+        get() = prefs.getInt(KEY_BUBBLE_SIZE_DP, DEFAULT_BUBBLE_SIZE_DP).coerceIn(MIN_BUBBLE_SIZE_DP, MAX_BUBBLE_SIZE_DP)
+        set(value) = prefs.edit().putInt(KEY_BUBBLE_SIZE_DP, value.coerceIn(MIN_BUBBLE_SIZE_DP, MAX_BUBBLE_SIZE_DP)).apply()
+
+    var bubbleDock: String
+        get() = prefs.getString(KEY_BUBBLE_DOCK, BUBBLE_DOCK_FREE) ?: BUBBLE_DOCK_FREE
+        set(value) = prefs.edit().putString(KEY_BUBBLE_DOCK, value).apply()
+
+    /* True while the user wants the idle bubble to stay on screen between recordings. */
+    var isBubblePinned: Boolean
+        get() = prefs.getBoolean(KEY_BUBBLE_PINNED, false)
+        set(value) = prefs.edit().putBoolean(KEY_BUBBLE_PINNED, value).apply()
 
     var isRecordingOverlayEnabled: Boolean
         get() = prefs.getBoolean(KEY_RECORDING_OVERLAY_ENABLED, DEFAULT_RECORDING_OVERLAY_ENABLED)

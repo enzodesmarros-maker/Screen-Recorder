@@ -362,29 +362,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*
-     * Shows "Open bubble" or "Close bubble" depending on whether the floating bubble is running.
+     * Shows "Open bubble" or "Close bubble" depending on whether the bubble is pinned and running.
      */
     private fun syncBubbleButton() {
-        setBubbleButtonState(RecordingOverlayService.isRunning)
+        setBubbleButtonState(RecordingOverlayService.isRunning && configManager.isBubblePinned)
     }
 
-    private fun setBubbleButtonState(running: Boolean) {
+    private fun setBubbleButtonState(active: Boolean) {
         binding.fabBubble.text = getString(
-            if (running) R.string.activity_main_bubble_close else R.string.activity_main_bubble_open
+            if (active) R.string.activity_main_bubble_close else R.string.activity_main_bubble_open
         )
     }
 
     /*
-     * Turns the floating bubble on (without recording) or off.
+     * Turns the floating bubble on (without recording) or off for good.
      */
     private fun toggleBubble() {
-        if (RecordingOverlayService.isRunning) {
+        if (RecordingOverlayService.isRunning && configManager.isBubblePinned) {
+            configManager.isBubblePinned = false
             stopService(Intent(this, RecordingOverlayService::class.java))
             setBubbleButtonState(false)
             return
         }
         if (!checkOverlayPermission()) return
         configManager.isRecordingOverlayEnabled = true
+        configManager.isBubblePinned = true
         try {
             startService(Intent(this, RecordingOverlayService::class.java))
             setBubbleButtonState(true)

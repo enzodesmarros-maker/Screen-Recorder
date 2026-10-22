@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Screen Cats</string>
+    <string name="app_name">Gravador de Tela</string>
     <string name="activity_about_title">Sobre</string>
     <string name="AboutActivity_title">Sobre</string>
     <string name="AboutActivity_desc_avatar">Foto de perfil</string>
@@ -344,4 +344,18 @@
     <string name="overlay_bubble_notif_title">Botão flutuante de gravação ativo</string>
     <string name="overlay_bubble_notif_text">Toque na bolinha para gravar a qualquer momento.</string>
     <string name="overlay_bubble_notif_close">Fechar bolinha</string>
+    <string name="sheet_settings_bubble_header">Bolinha flutuante</string>
+    <string name="sheet_settings_bubble_icon_title">Imagem da bolinha</string>
+    <string name="sheet_settings_bubble_icon_summary">Use sua própria foto como bolinha</string>
+    <string name="sheet_settings_bubble_icon_choose">Escolher imagem</string>
+    <string name="sheet_settings_bubble_icon_reset">Padrão</string>
+    <string name="sheet_settings_bubble_icon_failed">Não foi possível usar essa imagem.</string>
+    <string name="sheet_settings_bubble_size_title">Tamanho da bolinha</string>
+    <string name="sheet_settings_bubble_size_value_fmt">%1$d dp</string>
+    <string name="sheet_settings_bubble_dock_title">Fixar no canto</string>
+    <string name="sheet_settings_bubble_dock_summary">Ao soltar, a bolinha gruda no lado escolhido</string>
+    <string name="sheet_settings_bubble_dock_free">Livre</string>
+    <string name="sheet_settings_bubble_dock_left">Esquerda</string>
+    <string name="sheet_settings_bubble_dock_right">Direita</string>
+    <string name="overlay_bubble_remove">Remover bolinha</string>
 </resources>
