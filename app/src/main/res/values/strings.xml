@@ -362,4 +362,31 @@
 
     <string name="LocaleHelper_language_system">System Language</string>
 
+    <!-- Compress video -->
+    <string name="video_options_menu_compress">Compress video</string>
+    <string name="VideoAdapter_compress_title">Compress video</string>
+    <string name="VideoAdapter_compress_preset_light">Light – best quality (about 40% smaller)</string>
+    <string name="VideoAdapter_compress_preset_balanced">Balanced (about 60% smaller)</string>
+    <string name="VideoAdapter_compress_preset_maximum">Maximum (about 75% smaller, up to 720p)</string>
+    <string name="VideoAdapter_compress_btn_start">Compress</string>
+    <string name="VideoAdapter_compress_toast_started">Compressing in the background. Follow the progress in the notification.</string>
+    <string name="VideoAdapter_compress_toast_busy">Another video is already being compressed. Please wait for it to finish.</string>
+    <string name="VideoAdapter_compress_toast_not_smaller">The compressed video was not smaller. Try a stronger option.</string>
+    <string name="VideoAdapter_compress_toast_failed">Compression failed.</string>
+    <string name="CompressionService_channel_progress">Compression progress</string>
+    <string name="CompressionService_channel_done">Compression finished</string>
+    <string name="CompressionService_notif_title">Compressing video…</string>
+    <string name="CompressionService_preparing">Preparing…</string>
+    <string name="CompressionService_done_title">Video compression</string>
+    <string name="CompressionService_done_text_fmt">%1$.1f MB → %2$.1f MB (%3$d%% smaller). The compressed copy was added to your recordings; the original was kept.</string>
+
+    <!-- Floating record bubble -->
+    <string name="activity_main_bubble_open">Open bubble</string>
+    <string name="activity_main_bubble_close">Close bubble</string>
+    <string name="activity_main_bubble_active">Bubble active. Tap it to start recording.</string>
+    <string name="overlay_bubble_start">Start recording</string>
+    <string name="overlay_bubble_channel">Floating record button</string>
+    <string name="overlay_bubble_notif_title">Floating record button is active</string>
+    <string name="overlay_bubble_notif_text">Tap the bubble to start recording at any time.</string>
+    <string name="overlay_bubble_notif_close">Close bubble</string>
 </resources>
