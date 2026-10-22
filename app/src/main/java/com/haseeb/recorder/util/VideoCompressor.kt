@@ -88,7 +88,17 @@ class VideoCompressor(private val context: Context) {
         readDisplaySize(source)?.let { (w, h) ->
             val cap = preset.capShortSide
             if (cap != null && min(w, h) > cap) {
-                videoEffects.add(if (h >= w) Presentation.createForWidth(cap) else Presentation.createForHeight(cap))
+                // Scale so the short side equals "cap", keeping the aspect ratio (even sizes for the encoder).
+                val outW: Int
+                val outH: Int
+                if (h >= w) {
+                    outW = cap
+                    outH = (h.toLong() * cap / w).toInt().let { it - it % 2 }
+                } else {
+                    outH = cap
+                    outW = (w.toLong() * cap / h).toInt().let { it - it % 2 }
+                }
+                videoEffects.add(Presentation.createForWidthAndHeight(outW, outH, Presentation.LAYOUT_SCALE_TO_FIT))
             }
         }
 
