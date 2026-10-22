@@ -103,14 +103,36 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabRecord"
+    <LinearLayout
+        android:id="@+id/fabContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:layout_gravity="bottom|end"
-        app:icon="@drawable/ic_screen_record"
-        android:text="@string/activity_main_record_start"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
+        android:gravity="end"
+        android:orientation="vertical"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fabBubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/activity_main_bubble_open"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            app:backgroundTint="?attr/colorSecondaryContainer"
+            app:icon="@drawable/ic_bubble"
+            app:iconTint="?attr/colorOnSecondaryContainer" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fabRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/activity_main_record_start"
+            app:icon="@drawable/ic_screen_record" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
