@@ -721,12 +721,12 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
      */
     private fun notifyOverlayConfigChanged() {
         val ctx = context ?: return
-        if (ScreenRecordService.isRecording) {
-            if (configManager.isRecordingOverlayEnabled) {
+        if (configManager.isRecordingOverlayEnabled) {
+            if (ScreenRecordService.isRecording) {
                 ctx.startService(Intent(ctx, RecordingOverlayService::class.java))
-            } else {
-                ctx.stopService(Intent(ctx, RecordingOverlayService::class.java))
             }
+        } else {
+            ctx.stopService(Intent(ctx, RecordingOverlayService::class.java))
         }
         ctx.sendBroadcast(Intent(RecordingOverlayService.ACTION_OVERLAY_CONFIG_CHANGED))
     }
