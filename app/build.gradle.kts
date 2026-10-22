@@ -54,4 +54,7 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.1.0")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
+    implementation("androidx.media3:media3-transformer:1.8.0")
+    implementation("androidx.media3:media3-effect:1.8.0")
+    implementation("androidx.media3:media3-common:1.8.0")
 }
