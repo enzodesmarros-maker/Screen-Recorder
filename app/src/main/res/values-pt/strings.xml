@@ -316,4 +316,32 @@
     <string name="LocaleHelper_language_system">Idioma do sistema</string>
     <string name="AboutActivity_dialog_update_notes_header">O que há de novo</string>
     <string name="AboutActivity_dialog_update_no_notes">Nenhuma nota de versão fornecida para esta versão.</string>
+
+    <!-- Compress video -->
+    <string name="video_options_menu_compress">Comprimir vídeo</string>
+    <string name="VideoAdapter_compress_title">Comprimir vídeo</string>
+    <string name="VideoAdapter_compress_preset_light">Leve – melhor qualidade (cerca de 40% menor)</string>
+    <string name="VideoAdapter_compress_preset_balanced">Equilibrada (cerca de 60% menor)</string>
+    <string name="VideoAdapter_compress_preset_maximum">Máxima (cerca de 75% menor, até 720p)</string>
+    <string name="VideoAdapter_compress_btn_start">Comprimir</string>
+    <string name="VideoAdapter_compress_toast_started">Comprimindo em segundo plano. Acompanhe o progresso na notificação.</string>
+    <string name="VideoAdapter_compress_toast_busy">Outro vídeo já está sendo comprimido. Aguarde terminar.</string>
+    <string name="VideoAdapter_compress_toast_not_smaller">O vídeo comprimido não ficou menor. Tente uma opção mais forte.</string>
+    <string name="VideoAdapter_compress_toast_failed">Falha ao comprimir.</string>
+    <string name="CompressionService_channel_progress">Progresso da compressão</string>
+    <string name="CompressionService_channel_done">Compressão concluída</string>
+    <string name="CompressionService_notif_title">Comprimindo vídeo…</string>
+    <string name="CompressionService_preparing">Preparando…</string>
+    <string name="CompressionService_done_title">Compressão de vídeo</string>
+    <string name="CompressionService_done_text_fmt">%1$.1f MB → %2$.1f MB (%3$d%% menor). A cópia comprimida foi adicionada às suas gravações; o original foi mantido.</string>
+
+    <!-- Floating record bubble -->
+    <string name="activity_main_bubble_open">Abrir bolinha</string>
+    <string name="activity_main_bubble_close">Fechar bolinha</string>
+    <string name="activity_main_bubble_active">Bolinha ativa. Toque nela para começar a gravar.</string>
+    <string name="overlay_bubble_start">Iniciar gravação</string>
+    <string name="overlay_bubble_channel">Botão flutuante de gravação</string>
+    <string name="overlay_bubble_notif_title">Botão flutuante de gravação ativo</string>
+    <string name="overlay_bubble_notif_text">Toque na bolinha para gravar a qualquer momento.</string>
+    <string name="overlay_bubble_notif_close">Fechar bolinha</string>
 </resources>
