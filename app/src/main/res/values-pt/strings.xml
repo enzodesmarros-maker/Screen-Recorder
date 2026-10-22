@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Screen Cats/string>
+    <string name="app_name">Screen Cats</string>
     <string name="activity_about_title">Sobre</string>
     <string name="AboutActivity_title">Sobre</string>
     <string name="AboutActivity_desc_avatar">Foto de perfil</string>
