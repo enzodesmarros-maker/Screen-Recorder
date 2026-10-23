@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">情報</string>
     <string name="sheet_settings_storage_header">ストレージ</string>
     <string name="sheet_settings_storage_location_title">保存先</string>
-    <string name="sheet_settings_storage_default">デフォルト (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">デフォルト (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">変更</string>
     <string name="sheet_settings_storage_reset">デフォルトに戻す</string>
     <string name="sheet_settings_countdown_title">カウントダウンタイマー</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">名前の変更に失敗しました</string>
     <string name="VideoAdapter_toast_no_player">動画プレーヤーが見つかりません</string>
     <string name="ConfigManager_quality_max_with_label">最大 (%1$s)</string>
-    <string name="ConfigManager_storage_default">デフォルト (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">デフォルト (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">カスタム: %1$s</string>
     <string name="LocaleHelper_language_system">システム言語</string>
     <string name="AboutActivity_dialog_update_notes_header">新機能</string>

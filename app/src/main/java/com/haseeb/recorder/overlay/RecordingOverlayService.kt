@@ -34,6 +34,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     companion object {
         const val ACTION_OVERLAY_CONFIG_CHANGED = "com.haseeb.recorder.ACTION_OVERLAY_CONFIG_CHANGED"
         const val ACTION_CLOSE_BUBBLE = "com.haseeb.recorder.ACTION_CLOSE_BUBBLE"
+        const val ACTION_BUBBLE_STATE_CHANGED = "com.haseeb.recorder.ACTION_BUBBLE_STATE_CHANGED"
         private const val CHANNEL_ID = "overlay_bubble_channel"
         private const val NOTIFICATION_ID = 3
         private const val WINDOW_NONE = 0
@@ -71,6 +72,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     override fun onCreate() {
         super.onCreate()
         isRunning = true
+        sendBroadcast(Intent(ACTION_BUBBLE_STATE_CHANGED).setPackage(packageName))
         AppLog.i("Overlay", "Overlay service created (pinned=${ConfigManager(this).isBubblePinned})")
         MainThreadWatchdog.acquire()
         configManager = ConfigManager(this)
@@ -393,6 +395,7 @@ class RecordingOverlayService : Service(), RecordingOverlayController, Recording
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false
+        sendBroadcast(Intent(ACTION_BUBBLE_STATE_CHANGED).setPackage(packageName))
         AppLog.i("Overlay", "Overlay service destroyed")
         MainThreadWatchdog.release()
         RecordingStateManager.removeListener(this)

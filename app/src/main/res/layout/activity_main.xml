@@ -38,6 +38,16 @@
                     app:navigationIcon="@null" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRawVideos"
+                    style="@style/MaterialButtonIconTonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/activity_main_desc_raw_videos"
+                    app:icon="@drawable/ic_folder" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSettings"
                     style="@style/MaterialButtonIconTonal"
                     android:layout_width="wrap_content"

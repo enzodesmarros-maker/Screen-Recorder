@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">Información</string>
     <string name="sheet_settings_storage_header">Almacenamiento</string>
     <string name="sheet_settings_storage_location_title">Ubicación de Guardado</string>
-    <string name="sheet_settings_storage_default">Predeterminado (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">Predeterminado (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">Cambiar</string>
     <string name="sheet_settings_storage_reset">Restablecer</string>
     <string name="sheet_settings_countdown_title">Temporizador de Cuenta Regresiva</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">Error al renombrar</string>
     <string name="VideoAdapter_toast_no_player">No se encontró reproductor de vídeo</string>
     <string name="ConfigManager_quality_max_with_label">Máx (%1$s)</string>
-    <string name="ConfigManager_storage_default">Predeterminado (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">Predeterminado (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">Personalizado: %1$s</string>
     <string name="LocaleHelper_language_system">Idioma del sistema</string>
     <string name="AboutActivity_dialog_update_notes_header">Novedades</string>

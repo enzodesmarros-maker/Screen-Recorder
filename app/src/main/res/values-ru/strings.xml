@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">Информация</string>
     <string name="sheet_settings_storage_header">Место сохранения</string>
     <string name="sheet_settings_storage_location_title">Папка для сохранения</string>
-    <string name="sheet_settings_storage_default">По умолчанию (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">По умолчанию (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">Изменить</string>
     <string name="sheet_settings_storage_reset">Сбросить</string>
     <string name="sheet_settings_countdown_title">Обратный отсчет</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">Не удалось переименовать файл</string>
     <string name="VideoAdapter_toast_no_player">Приложение для воспроизведения видео не найдено</string>
     <string name="ConfigManager_quality_max_with_label">Макс (%1$s)</string>
-    <string name="ConfigManager_storage_default">По умолчанию (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">По умолчанию (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">Папка: %1$s</string>
     <string name="LocaleHelper_language_system">Язык системы</string>
     <string name="AboutActivity_dialog_update_notes_header">Что нового</string>

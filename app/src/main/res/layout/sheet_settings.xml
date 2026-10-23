@@ -637,7 +637,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="2dp"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.ListItem.Last">
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.ListItem.Middle">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -696,6 +696,88 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/sheet_settings_orientation_landscape" />
+
+                            </com.google.android.material.button.MaterialButtonToggleGroup>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewFilledStyle"
+                    android:id="@+id/cardRecordingMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="2dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.ListItem.Last">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/sheet_settings_recmode_title"
+                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnRecordingModeHelp"
+                                style="@style/MaterialButtonIconStandard"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="@string/sheet_settings_recmode_help_desc"
+                                app:icon="@drawable/ic_info" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:text="@string/sheet_settings_recmode_summary"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:paddingHorizontal="16dp"
+                            android:scrollbars="none">
+
+                            <com.google.android.material.button.MaterialButtonToggleGroup
+                                android:id="@+id/buttonGroupRecordingMode"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:singleSelection="true"
+                                app:selectionRequired="true">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnRecModeNormal"
+                                    style="@style/MaterialButtonSecondaryOutline"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/sheet_settings_recmode_normal" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnRecModeStaged"
+                                    style="@style/MaterialButtonSecondaryOutline"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/sheet_settings_recmode_staged" />
 
                             </com.google.android.material.button.MaterialButtonToggleGroup>
                         </HorizontalScrollView>
@@ -2029,41 +2111,42 @@
                     android:focusable="true"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.ListItem.Last">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:padding="16dp">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_info"
-                            app:tint="?attr/colorPrimary" />
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchLogs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:clickable="false"
+                            android:focusable="false" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
+                            android:layout_toStartOf="@id/switchLogs"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/tvToggleLogsTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="@string/sheet_settings_logs_toggle_title"
                                 android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                             <TextView
-                                android:id="@+id/tvToggleLogsSummary"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="@string/sheet_settings_logs_toggle_summary"
                                 android:textAppearance="?attr/textAppearanceBodyMedium"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
                         </LinearLayout>
-                    </LinearLayout>
+                    </RelativeLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>

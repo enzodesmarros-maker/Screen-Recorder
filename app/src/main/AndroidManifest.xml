@@ -72,6 +72,15 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.activity.RawVideosActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".remux.RemuxService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync|mediaProcessing" />
+
+        <activity
             android:name=".ui.activity.CameraPermissionActivity"
             android:exported="false"
             android:excludeFromRecents="true"

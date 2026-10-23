@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">معلومات</string>
     <string name="sheet_settings_storage_header">اسٹوریج</string>
     <string name="sheet_settings_storage_location_title">محفوظ کرنے کی جگہ</string>
-    <string name="sheet_settings_storage_default">ڈیفالٹ (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">ڈیفالٹ (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">تبدیل کریں</string>
     <string name="sheet_settings_storage_reset">ڈیفالٹ پر بحال کریں</string>
     <string name="sheet_settings_countdown_title">کاؤنٹ ڈاؤن ٹائمر</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">نام تبدیل کرنے میں ناکامی</string>
     <string name="VideoAdapter_toast_no_player">کوئی ویڈیو پلیئر نہیں ملا</string>
     <string name="ConfigManager_quality_max_with_label">زیادہ سے زیادہ (%1$s)</string>
-    <string name="ConfigManager_storage_default">ڈیفالٹ (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">ڈیفالٹ (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">حسب ضرورت: %1$s</string>
     <string name="LocaleHelper_language_system">سسٹم کی زبان</string>
     <string name="AboutActivity_dialog_update_notes_header">نیا کیا ہے</string>

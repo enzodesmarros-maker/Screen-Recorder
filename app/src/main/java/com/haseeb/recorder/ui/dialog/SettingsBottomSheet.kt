@@ -229,6 +229,10 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
         }
         binding.buttonGroupOrientation.check(orientationButtonId)
 
+        binding.buttonGroupRecordingMode.check(
+            if (configManager.recordingMode == ConfigManager.RECORDING_MODE_STAGED) R.id.btnRecModeStaged else R.id.btnRecModeNormal
+        )
+
         binding.sliderBubbleSize.value = configManager.bubbleSizeDp.toFloat()
         binding.tvBubbleSizeValue.text = getString(R.string.sheet_settings_bubble_size_value_fmt, configManager.bubbleSizeDp)
         binding.buttonGroupBubbleDock.check(
@@ -532,11 +536,29 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
             updateStorageUI()
         }
 
-        updateLogsToggleUi()
+        binding.buttonGroupRecordingMode.addOnButtonCheckedListener { _: MaterialButtonToggleGroup, checkedId: Int, isChecked: Boolean ->
+            if (isChecked) {
+                val staged = checkedId == R.id.btnRecModeStaged
+                configManager.recordingMode = if (staged) ConfigManager.RECORDING_MODE_STAGED else ConfigManager.RECORDING_MODE_NORMAL
+                AppLog.i("Settings", "Recording mode set to ${configManager.recordingMode}")
+                if (staged) {
+                    Toast.makeText(requireContext(), getString(R.string.sheet_settings_recmode_staged_toast), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        binding.btnRecordingModeHelp.setOnClickListener {
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.sheet_settings_recmode_title))
+                .setMessage(getString(R.string.sheet_settings_recmode_help_msg))
+                .setPositiveButton(getString(R.string.sheet_settings_recmode_help_ok), null)
+                .show()
+        }
+
+        binding.switchLogs.isChecked = AppLog.enabled
         binding.cardShareLogs.setOnClickListener { shareLogs() }
-        binding.cardToggleLogs.setOnClickListener {
-            AppLog.setEnabled(requireContext(), !AppLog.enabled)
-            updateLogsToggleUi()
+        binding.cardToggleLogs.setOnClickListener { binding.switchLogs.toggle() }
+        binding.switchLogs.setOnCheckedChangeListener { _, isChecked ->
+            AppLog.setEnabled(requireContext(), isChecked)
         }
 
         binding.cardAmoled.setOnClickListener { binding.switchAmoled.toggle() }
@@ -863,19 +885,6 @@ class SettingsBottomSheet : BottomSheetDialogFragment(), RecordingStateManager.S
                 Toast.makeText(ctx, getString(R.string.sheet_settings_logs_failed), Toast.LENGTH_LONG).show()
             }
         }
-    }
-
-    /*
-     * Shows whether logging is on and what tapping the card will do.
-     */
-    private fun updateLogsToggleUi() {
-        val on = AppLog.enabled
-        binding.tvToggleLogsTitle.text = getString(
-            if (on) R.string.sheet_settings_logs_off_title else R.string.sheet_settings_logs_on_title
-        )
-        binding.tvToggleLogsSummary.text = getString(
-            if (on) R.string.sheet_settings_logs_on_summary else R.string.sheet_settings_logs_off_summary
-        )
     }
 
     private fun notifyOverlayConfigChanged() {

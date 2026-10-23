@@ -114,7 +114,7 @@
     <string name="sheet_settings_about_header">Information</string>
     <string name="sheet_settings_storage_header">Storage</string>
     <string name="sheet_settings_storage_location_title">Save Location</string>
-    <string name="sheet_settings_storage_default">Default (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">Default (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">Change</string>
     <string name="sheet_settings_storage_reset">Reset to Default</string>
     <string name="sheet_settings_countdown_title">Countdown Timer</string>
@@ -357,7 +357,7 @@
     <string name="VideoAdapter_toast_no_player">No video player found</string>
 
     <string name="ConfigManager_quality_max_with_label">Max (%1$s)</string>
-    <string name="ConfigManager_storage_default">Default (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">Default (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">Custom: %1$s</string>
 
     <string name="LocaleHelper_language_system">System Language</string>
@@ -408,10 +408,55 @@
     <string name="sheet_settings_diag_header">Diagnostics</string>
     <string name="sheet_settings_logs_share_title">Share logs</string>
     <string name="sheet_settings_logs_share_summary">Send the app\'s technical log to help find problems</string>
-    <string name="sheet_settings_logs_off_title">Turn off logging</string>
-    <string name="sheet_settings_logs_on_title">Turn on logging</string>
-    <string name="sheet_settings_logs_on_summary">Logging is on. Tap to turn it off.</string>
-    <string name="sheet_settings_logs_off_summary">Logging is off. Tap to turn it on.</string>
     <string name="sheet_settings_logs_empty">No logs recorded yet.</string>
     <string name="sheet_settings_logs_failed">Could not prepare the logs.</string>
+    <string name="sheet_settings_logs_toggle_title">Record logs</string>
+    <string name="sheet_settings_logs_toggle_summary">Saves a technical log to help find problems. Off by default.</string>
+    <string name="AboutActivity_contributor_xitzinho_name" translatable="false">Xitzinho</string>
+    <string name="AboutActivity_contributor_xitzinho_role">Developer of this version</string>
+    <string name="AboutActivity_contributor_xitzinho_desc">Took the original project and improved it: 1080p recording, floating record bubble, background video compression, AMOLED mode and diagnostic logs.</string>
+    <string name="AboutActivity_contributor_xitzinho_tag_dev">Developer</string>
+    <string name="AboutActivity_contributor_xitzinho_tag_improvements">Improvements</string>
+    <string name="activity_main_desc_raw_videos">Videos not converted yet</string>
+    <string name="activity_raw_videos_title">Unconverted videos</string>
+    <string name="activity_raw_videos_empty">No videos here yet. Recordings made in the In stages mode appear on this screen.</string>
+    <string name="activity_raw_videos_desc_menu">More options</string>
+    <string name="raw_menu_convert">Convert to MP4</string>
+    <string name="raw_menu_rename">Rename</string>
+    <string name="raw_menu_delete">Delete</string>
+    <string name="raw_toast_no_player">No app found to play this video. Convert it to MP4 first.</string>
+    <string name="raw_dialog_delete_title">Delete video?</string>
+    <string name="raw_dialog_delete_msg">This recording has not been converted yet. If you delete it, it cannot be recovered.</string>
+    <string name="raw_toast_busy">Another video is being converted. Please wait for it to finish.</string>
+    <string name="raw_dialog_long_title">Long video</string>
+    <string name="raw_dialog_long_msg">This video is long, so converting can take a while. You can leave it running in the background and keep using your phone. The progress shows in the notification.</string>
+    <string name="raw_btn_convert">Convert</string>
+    <string name="raw_toast_convert_failed">Could not start the conversion.</string>
+    <string name="raw_progress_title">Converting %1$s</string>
+    <string name="raw_btn_background">Keep in background</string>
+    <string name="raw_btn_cancel_conversion">Cancel conversion</string>
+    <string name="raw_toast_convert_done">Done! The MP4 video is in your gallery.</string>
+    <string name="raw_toast_convert_stopped">Conversion stopped.</string>
+    <string name="raw_item_recording_now">Recording now…</string>
+    <string name="raw_item_subtitle">%1$s • %2$s</string>
+    <string name="raw_item_subtitle_duration">%1$s • %2$s • %3$s</string>
+    <string name="ScreenRecordService_staged_saved">Recording saved safely. To put it in the gallery, convert it with the folder button on the home screen.</string>
+    <string name="RemuxService_channel_progress">Conversion progress</string>
+    <string name="RemuxService_channel_done">Conversion finished</string>
+    <string name="RemuxService_notif_title">Converting %1$s</string>
+    <string name="RemuxService_working">Converting…</string>
+    <string name="RemuxService_progress_eta">%1$d%% • about %2$s left</string>
+    <string name="RemuxService_eta_minutes">%1$d min</string>
+    <string name="RemuxService_eta_seconds">%1$d s</string>
+    <string name="RemuxService_done_title">Video conversion</string>
+    <string name="RemuxService_done_text">%1$s is ready in your gallery as an MP4. The original file is still in the unconverted videos screen.</string>
+    <string name="RemuxService_failed_text">Could not convert %1$s. The original file was kept.</string>
+    <string name="sheet_settings_recmode_title">Recording mode</string>
+    <string name="sheet_settings_recmode_summary">Normal is recommended. Tap the i button to see the difference.</string>
+    <string name="sheet_settings_recmode_normal">Normal (recommended)</string>
+    <string name="sheet_settings_recmode_staged">In stages</string>
+    <string name="sheet_settings_recmode_help_desc">What is this?</string>
+    <string name="sheet_settings_recmode_help_ok">Got it</string>
+    <string name="sheet_settings_recmode_staged_toast">Recordings in this mode appear on the folder button, next to the gear on the home screen.</string>
+    <string name="sheet_settings_recmode_help_msg">Normal (recommended)\nYour video is ready in the gallery as soon as you stop recording. Best for everyday use.\n\nIn stages\nThe video is saved in a special safe way while you record. If your phone turns off, the battery dies or the app closes, you do NOT lose your recording.\nThe catch: after recording, it does not go to the gallery yet. You open the folder button next to the gear on the home screen and convert it to a normal video. Converting can take a while for long videos, but it runs in the background.\nGood for long recordings, or when you cannot afford to lose the video.</string>
 </resources>

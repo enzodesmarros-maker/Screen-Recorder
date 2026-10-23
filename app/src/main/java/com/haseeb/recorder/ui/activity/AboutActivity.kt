@@ -82,7 +82,7 @@ class AboutActivity : AppCompatActivity() {
                     getString(R.string.AboutActivity_tag_open_source),
                     getString(R.string.AboutActivity_tag_m3)
                 ),
-                githubUrl = "https://github.com/muhammadhaseebiqbal-dev/Screen-Recorder",
+                githubUrl = "https://github.com/enzodesmarros-maker/Screen-Recorder",
                 icon = Icon.Mipmap(R.mipmap.ic_launcher)
             ),
             AboutItem(
@@ -109,6 +109,19 @@ class AboutActivity : AppCompatActivity() {
                 type = ItemType.CATEGORY_HEADER,
                 titleRes = R.string.AboutActivity_cat_contributors,
                 subtitleRes = R.string.AboutActivity_cat_contributors_sub
+            ),
+            AboutItem(
+                type = ItemType.CONTRIBUTOR,
+                titleRes = R.string.AboutActivity_contributor_xitzinho_name,
+                subtitleRes = R.string.AboutActivity_contributor_xitzinho_role,
+                descriptionRes = R.string.AboutActivity_contributor_xitzinho_desc,
+                tags = listOf(
+                    getString(R.string.AboutActivity_contributor_xitzinho_tag_dev),
+                    getString(R.string.AboutActivity_contributor_xitzinho_tag_improvements)
+                ),
+                primaryUrl = "https://github.com/enzodesmarros-maker",
+                githubUrl = "https://github.com/enzodesmarros-maker",
+                icon = Icon.Url("https://github.com/enzodesmarros-maker.png")
             ),
             AboutItem(
                 type = ItemType.CONTRIBUTOR,

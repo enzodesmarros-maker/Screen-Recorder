@@ -101,7 +101,7 @@
     <string name="sheet_settings_about_header">关于</string>
     <string name="sheet_settings_storage_header">存储路径</string>
     <string name="sheet_settings_storage_location_title">录屏保存目录</string>
-    <string name="sheet_settings_storage_default">默认路径 (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">默认路径 (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">更改</string>
     <string name="sheet_settings_storage_reset">恢复默认</string>
     <string name="sheet_settings_countdown_title">倒计时</string>
@@ -318,7 +318,7 @@
     <string name="VideoAdapter_toast_rename_failed">重命名文件失败</string>
     <string name="VideoAdapter_toast_no_player">未找到可播放视频的应用</string>
     <string name="ConfigManager_quality_max_with_label">最大 (%1$s)</string>
-    <string name="ConfigManager_storage_default">默认路径 (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">默认路径 (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">自定义: %1$s</string>
     <string name="LocaleHelper_language_system">系统语言</string>
 </resources>

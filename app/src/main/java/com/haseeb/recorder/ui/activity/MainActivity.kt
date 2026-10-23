@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
             when (intent?.action) {
                 ScreenRecordService.ACTION_STATE_CHANGED -> syncRecordingUi()
                 CompressionService.ACTION_COMPRESSION_DONE -> loadVideos()
+                RecordingOverlayService.ACTION_BUBBLE_STATE_CHANGED -> syncBubbleButton()
             }
         }
     }
@@ -164,6 +165,11 @@ class MainActivity : AppCompatActivity() {
         binding.fabBubble.setOnClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             toggleBubble()
+        }
+
+        binding.btnRawVideos.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            startActivity(Intent(this, RawVideosActivity::class.java))
         }
 
         binding.btnSettings.setOnClickListener {
@@ -379,6 +385,7 @@ class MainActivity : AppCompatActivity() {
         )
         val filter = IntentFilter(ScreenRecordService.ACTION_STATE_CHANGED).apply {
             addAction(CompressionService.ACTION_COMPRESSION_DONE)
+            addAction(RecordingOverlayService.ACTION_BUBBLE_STATE_CHANGED)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(recordingStateReceiver, filter, Context.RECEIVER_EXPORTED)

@@ -16,6 +16,7 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.*
+import android.widget.Toast
 import com.haseeb.recorder.util.AppLog
 import android.provider.Settings
 import android.util.DisplayMetrics
@@ -114,7 +115,8 @@ class ScreenRecordService : Service() {
 
     private var videoEncoder: MediaCodec? = null
     private var audioEncoder: MediaCodec? = null
-    private var mediaMuxer: MediaMuxer? = null
+    private var mediaMuxer: RecordingMuxer? = null
+    private var stagedOutput = false
     private var videoTrackIndex = -1
     private var audioTrackIndex = -1
     private var muxerStarted = false
@@ -374,10 +376,25 @@ class ScreenRecordService : Service() {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val fileName = "ScreenRecord_$timestamp.mp4"
 
+        // "Staged" mode: write a crash-safe MKV inside the app's own storage; it is converted to MP4 later.
+        val stagedFile = if (configManager.recordingMode == ConfigManager.RECORDING_MODE_STAGED) {
+            RawRecordings.createFile(this, "ScreenRecord_$timestamp")
+        } else {
+            null
+        }
+        stagedOutput = stagedFile != null
+        if (stagedFile != null) {
+            outputFilePath = stagedFile.absolutePath
+            RawRecordings.activePath = outputFilePath
+            AppLog.i("RecService", "Staged recording to ${stagedFile.name}")
+        } else if (configManager.recordingMode == ConfigManager.RECORDING_MODE_STAGED) {
+            AppLog.w("RecService", "Could not create the staged file; using normal recording instead")
+        }
+
         val customUriString = configManager.customStorageUri
         var customSaved = false
 
-        if (!customUriString.isNullOrEmpty()) {
+        if (!stagedOutput && !customUriString.isNullOrEmpty()) {
             try {
                 val treeUri = Uri.parse(customUriString)
                 val pickedDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(this, treeUri)
@@ -394,12 +411,12 @@ class ScreenRecordService : Service() {
             }
         }
 
-        if (!customSaved) {
+        if (!customSaved && !stagedOutput) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val contentValues = android.content.ContentValues().apply {
                     put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/ScreenRecorder")
+                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/ScreenCats")
                 }
                 val uri = contentResolver.insert(android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
                 uri?.let {
@@ -408,7 +425,7 @@ class ScreenRecordService : Service() {
                 }
             } else {
                 val moviesDir = getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: filesDir
-                val recorderDir = File(moviesDir, "ScreenRecorder").apply { if (!exists()) mkdirs() }
+                val recorderDir = File(moviesDir, "ScreenCats").apply { if (!exists()) mkdirs() }
                 outputFilePath = File(recorderDir, fileName).absolutePath
             }
         }
@@ -460,10 +477,10 @@ class ScreenRecordService : Service() {
 
             if (hasAnyAudio) setupAudioEncoders(wantMic, wantSysAudio)
 
-            mediaMuxer = if (outputFileDescriptor != null) {
-                MediaMuxer(outputFileDescriptor!!.fileDescriptor, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
-            } else {
-                MediaMuxer(outputFilePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+            mediaMuxer = when {
+                stagedOutput -> MkvRecordingMuxer(File(outputFilePath))
+                outputFileDescriptor != null -> Mp4RecordingMuxer(outputFileDescriptor!!)
+                else -> Mp4RecordingMuxer(outputFilePath)
             }
 
             virtualDisplay = mediaProjection?.createVirtualDisplay(
@@ -835,6 +852,10 @@ class ScreenRecordService : Service() {
         cleanup()
         isRecording = false
         sendStateBroadcast(STATE_STOP)
+        if (stagedOutput) {
+            RawRecordings.activePath = null
+            Toast.makeText(this, getString(R.string.ScreenRecordService_staged_saved), Toast.LENGTH_LONG).show()
+        }
         AppLog.i(
             "RecService",
             "stopRecording done in ${SystemClock.elapsedRealtime() - stopStart}ms " +
@@ -861,6 +882,11 @@ class ScreenRecordService : Service() {
         try { mediaMuxer?.release() } catch (_: Exception) {}; mediaMuxer = null
         muxerStarted = false
         try { outputFileDescriptor?.close() } catch (_: Exception) {}; outputFileDescriptor = null
+        RawRecordings.activePath = null
+        if (stagedOutput) {
+            // A staged file that never received data (recording failed to start) is not worth keeping.
+            try { File(outputFilePath).let { if (it.exists() && it.length() < 1024) it.delete() } } catch (_: Exception) {}
+        }
         mediaProjection?.stop(); mediaProjection = null
         releaseWakeLock()
     }

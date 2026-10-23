@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">معلومات</string>
     <string name="sheet_settings_storage_header">التخزين</string>
     <string name="sheet_settings_storage_location_title">مكان الحفظ</string>
-    <string name="sheet_settings_storage_default">افتراضي (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">افتراضي (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">تغيير</string>
     <string name="sheet_settings_storage_reset">استعادة الافتراضي</string>
     <string name="sheet_settings_countdown_title">مؤقت العد التنازلي</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">فشلت إعادة التسمية</string>
     <string name="VideoAdapter_toast_no_player">لم يتم العثور على مشغل فيديو</string>
     <string name="ConfigManager_quality_max_with_label">الحد الأقصى (%1$s)</string>
-    <string name="ConfigManager_storage_default">افتراضي (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">افتراضي (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">مخصص: %1$s</string>
     <string name="LocaleHelper_language_system">لغة النظام</string>
     <string name="AboutActivity_dialog_update_notes_header">ما الجديد</string>

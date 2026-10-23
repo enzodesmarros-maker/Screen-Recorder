@@ -34,7 +34,10 @@ class ConfigManager(private val context: Context) {
         const val KEY_VIDEO_ORIENTATION = "video_orientation"
         const val KEY_AMOLED = "amoled_mode"
         const val KEY_LOGGING = "diagnostic_logging"
-        const val DEFAULT_LOGGING_ENABLED = true
+        const val KEY_RECORDING_MODE = "recording_mode"
+        const val RECORDING_MODE_NORMAL = "normal"
+        const val RECORDING_MODE_STAGED = "staged"
+        const val DEFAULT_LOGGING_ENABLED = false
         const val KEY_BUBBLE_SIZE_DP = "bubble_size_dp"
         const val KEY_BUBBLE_DOCK = "bubble_dock"
         const val KEY_BUBBLE_PINNED = "bubble_pinned"
@@ -166,6 +169,11 @@ class ConfigManager(private val context: Context) {
 
     /* Pure black backgrounds in dark theme (saves battery on OLED screens). */
     /* App-wide diagnostic logging (technical info only). */
+    /* "normal" saves a ready MP4; "staged" writes a crash-safe MKV first and converts to MP4 later. */
+    var recordingMode: String
+        get() = prefs.getString(KEY_RECORDING_MODE, RECORDING_MODE_NORMAL) ?: RECORDING_MODE_NORMAL
+        set(value) = prefs.edit().putString(KEY_RECORDING_MODE, value).apply()
+
     var isLoggingEnabled: Boolean
         get() = prefs.getBoolean(KEY_LOGGING, DEFAULT_LOGGING_ENABLED)
         set(value) = prefs.edit().putBoolean(KEY_LOGGING, value).apply()

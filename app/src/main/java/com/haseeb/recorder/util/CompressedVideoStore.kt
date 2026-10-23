@@ -25,7 +25,7 @@ object CompressedVideoStore {
     }
 
     /*
-     * Copies the file to the custom storage folder when set, otherwise to DCIM/ScreenRecorder.
+     * Copies the file to the custom storage folder when set, otherwise to DCIM/ScreenCats.
      * Must be called from a background thread.
      */
     fun save(context: Context, originalName: String, file: File): Boolean {
@@ -53,7 +53,7 @@ object CompressedVideoStore {
             put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/ScreenRecorder")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/ScreenCats")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
         }

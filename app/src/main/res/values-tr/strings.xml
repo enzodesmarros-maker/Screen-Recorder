@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">Bilgi</string>
     <string name="sheet_settings_storage_header">Depolama Konumu</string>
     <string name="sheet_settings_storage_location_title">Kayıt Klasörü</string>
-    <string name="sheet_settings_storage_default">Varsayılan (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">Varsayılan (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">Değiştir</string>
     <string name="sheet_settings_storage_reset">Sıfırla</string>
     <string name="sheet_settings_countdown_title">Geri Sayım</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">Dosya yeniden adlandırılamadı</string>
     <string name="VideoAdapter_toast_no_player">Video oynatabilecek uygulama bulunamadı</string>
     <string name="ConfigManager_quality_max_with_label">Maks (%1$s)</string>
-    <string name="ConfigManager_storage_default">Varsayılan (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">Varsayılan (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">Özel: %1$s</string>
     <string name="LocaleHelper_language_system">Sistem Dili</string>
     <string name="AboutActivity_dialog_update_notes_header">Yenilikler</string>

@@ -94,7 +94,7 @@
     <string name="sheet_settings_about_header">Informations</string>
     <string name="sheet_settings_storage_header">Stockage</string>
     <string name="sheet_settings_storage_location_title">Emplacement d\'Enregistrement</string>
-    <string name="sheet_settings_storage_default">Par défaut (DCIM/ScreenRecorder)</string>
+    <string name="sheet_settings_storage_default">Par défaut (DCIM/ScreenCats)</string>
     <string name="sheet_settings_storage_change">Modifier</string>
     <string name="sheet_settings_storage_reset">Restaurer</string>
     <string name="sheet_settings_countdown_title">Minuteur de Compte à Rebours</string>
@@ -311,7 +311,7 @@
     <string name="VideoAdapter_toast_rename_failed">Échec du renommage</string>
     <string name="VideoAdapter_toast_no_player">Aucun lecteur vidéo trouvé</string>
     <string name="ConfigManager_quality_max_with_label">Max (%1$s)</string>
-    <string name="ConfigManager_storage_default">Par défaut (DCIM/ScreenRecorder)</string>
+    <string name="ConfigManager_storage_default">Par défaut (DCIM/ScreenCats)</string>
     <string name="ConfigManager_storage_custom">Personnalisé : %1$s</string>
     <string name="LocaleHelper_language_system">Langue du système</string>
     <string name="AboutActivity_dialog_update_notes_header">Nouveautés</string>
