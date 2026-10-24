@@ -714,24 +714,46 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingVertical="12dp"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="8dp">
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/sheet_settings_recmode_title"
+                                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnRecordingModeHelp"
+                                style="@style/MaterialButtonIconStandard"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:contentDescription="@string/sheet_settings_recmode_help_desc"
+                                app:icon="@drawable/ic_info" />
+                        </LinearLayout>
 
                         <HorizontalScrollView
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:clipToPadding="false"
+                            android:paddingHorizontal="16dp"
                             android:scrollbars="none">
 
                             <com.google.android.material.button.MaterialButtonToggleGroup
                                 android:id="@+id/buttonGroupRecordingMode"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:contentDescription="@string/sheet_settings_recmode_title"
                                 app:singleSelection="true"
                                 app:selectionRequired="true">
 
@@ -751,14 +773,6 @@
 
                             </com.google.android.material.button.MaterialButtonToggleGroup>
                         </HorizontalScrollView>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnRecordingModeHelp"
-                            style="@style/MaterialButtonIconStandard"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="@string/sheet_settings_recmode_help_desc"
-                            app:icon="@drawable/ic_info" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
