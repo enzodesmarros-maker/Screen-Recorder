@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.text.format.Formatter
@@ -21,6 +22,8 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.haseeb.recorder.R
@@ -49,6 +52,7 @@ class RawVideosActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRawVideosBinding
     private val adapter = RawVideoAdapter()
 
+    private var convertingFile: File? = null
     private var progressDialog: AlertDialog? = null
     private var progressText: TextView? = null
     private var progressBar: LinearProgressIndicator? = null
@@ -79,7 +83,11 @@ class RawVideosActivity : AppCompatActivity() {
         RemuxService.listener = { percent, eta, finished, success -> onRemuxUpdate(percent, eta, finished, success) }
         loadVideos()
         if (RemuxService.isRunning && progressDialog == null) {
-            showProgressDialog(RemuxService.currentName ?: "")
+            val name = RemuxService.currentName ?: ""
+            if (convertingFile == null && name.isNotEmpty()) {
+                convertingFile = File(RawRecordings.dir(this), "$name.${RawRecordings.EXTENSION}")
+            }
+            showProgressDialog(name)
         }
     }
 
@@ -144,6 +152,7 @@ class RawVideosActivity : AppCompatActivity() {
                 if (!valid || (target.exists() && target != video.file) || !video.file.renameTo(target)) {
                     Toast.makeText(this, getString(R.string.VideoAdapter_toast_rename_failed), Toast.LENGTH_SHORT).show()
                 } else {
+                    RawRecordings.renameConverted(this, video.file.name, target.name)
                     loadVideos()
                 }
             }
@@ -154,10 +163,14 @@ class RawVideosActivity : AppCompatActivity() {
     private fun showDeleteDialog(video: RawVideo) {
         MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.raw_dialog_delete_title))
-            .setMessage(getString(R.string.raw_dialog_delete_msg))
+            .setMessage(
+                getString(
+                    if (RawRecordings.isConverted(this, video.file.name)) R.string.raw_dialog_delete_msg_converted
+                    else R.string.raw_dialog_delete_msg
+                )
+            )
             .setPositiveButton(getString(R.string.VideoAdapter_btn_delete)) { _, _ ->
-                video.file.delete()
-                loadVideos()
+                deleteOriginal(video.file)
             }
             .setNegativeButton(getString(R.string.VideoAdapter_btn_cancel), null)
             .show()
@@ -186,12 +199,32 @@ class RawVideosActivity : AppCompatActivity() {
 
     private fun startConversion(video: RawVideo) {
         try {
+            convertingFile = video.file
             RemuxService.start(this, video.file)
             showProgressDialog(video.file.nameWithoutExtension)
         } catch (e: Exception) {
             AppLog.e("RawVideos", "Could not start the conversion", e)
             Toast.makeText(this, getString(R.string.raw_toast_convert_failed), Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun deleteOriginal(file: File) {
+        file.delete()
+        RawRecordings.forgetConverted(this, file.name)
+        loadVideos()
+    }
+
+    /*
+     * After a successful conversion, offers to free the space used by the original MKV.
+     */
+    private fun askDeleteOriginal(file: File) {
+        if (isFinishing || isDestroyed) return
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.raw_dialog_converted_title))
+            .setMessage(getString(R.string.raw_dialog_converted_msg))
+            .setPositiveButton(getString(R.string.raw_btn_delete_original)) { _, _ -> deleteOriginal(file) }
+            .setNegativeButton(getString(R.string.raw_btn_keep), null)
+            .show()
     }
 
     // ---------------------------------------------------------------- progress dialog
@@ -235,12 +268,14 @@ class RawVideosActivity : AppCompatActivity() {
     private fun onRemuxUpdate(percent: Int, etaSeconds: Long, finished: Boolean, success: Boolean) {
         if (finished) {
             dismissProgressDialog()
-            Toast.makeText(
-                this,
-                getString(if (success) R.string.raw_toast_convert_done else R.string.raw_toast_convert_stopped),
-                Toast.LENGTH_LONG
-            ).show()
             loadVideos()
+            val converted = convertingFile
+            convertingFile = null
+            if (success && converted != null) {
+                askDeleteOriginal(converted)
+            } else {
+                Toast.makeText(this, getString(R.string.raw_toast_convert_stopped), Toast.LENGTH_LONG).show()
+            }
             return
         }
         if (percent >= 0) {
@@ -289,12 +324,32 @@ class RawVideosActivity : AppCompatActivity() {
             val size = Formatter.formatShortFileSize(this@RawVideosActivity, video.file.length())
             val date = DateFormat.getMediumDateFormat(this@RawVideosActivity).format(Date(video.file.lastModified())) +
                 " " + DateFormat.getTimeFormat(this@RawVideosActivity).format(Date(video.file.lastModified()))
-            b.subtitleText.text = if (isActive) {
+            val baseSubtitle = if (isActive) {
                 getString(R.string.raw_item_recording_now)
-            } else if (video.durationMs > 0) {
-                getString(R.string.raw_item_subtitle_duration, size, formatDuration(video.durationMs), date)
             } else {
                 getString(R.string.raw_item_subtitle, size, date)
+            }
+            b.subtitleText.text = if (!isActive && RawRecordings.isConverted(this@RawVideosActivity, video.file.name)) {
+                baseSubtitle + " • " + getString(R.string.raw_item_converted)
+            } else {
+                baseSubtitle
+            }
+
+            if (video.durationMs > 0 && !isActive) {
+                b.durationCard.visibility = View.VISIBLE
+                b.durationText.text = formatDuration(video.durationMs)
+            } else {
+                b.durationCard.visibility = View.GONE
+            }
+            if (isActive) {
+                b.thumbnail.setImageResource(R.drawable.ic_screen_record)
+            } else {
+                Glide.with(b.thumbnail)
+                    .load(Uri.fromFile(video.file))
+                    .signature(ObjectKey("${video.file.lastModified()}-${video.file.length()}"))
+                    .centerCrop()
+                    .error(R.drawable.ic_screen_record)
+                    .into(b.thumbnail)
             }
 
             b.btnMenu.visibility = if (isActive) View.GONE else View.VISIBLE

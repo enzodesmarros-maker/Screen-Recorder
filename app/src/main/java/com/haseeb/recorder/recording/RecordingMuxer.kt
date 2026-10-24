@@ -67,6 +67,38 @@ object RawRecordings {
         }
     }
 
+    private const val PREFS_NAME = "raw_recordings_state"
+    private const val KEY_CONVERTED = "converted_names"
+
+    private fun prefs(context: android.content.Context) =
+        context.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
+
+    private fun convertedSet(context: android.content.Context): MutableSet<String> =
+        HashSet(prefs(context).getStringSet(KEY_CONVERTED, emptySet()) ?: emptySet())
+
+    /* Remembers that this file already has an MP4 copy in the gallery. */
+    fun markConverted(context: android.content.Context, fileName: String) {
+        val set = convertedSet(context)
+        set.add(fileName)
+        prefs(context).edit().putStringSet(KEY_CONVERTED, set).apply()
+    }
+
+    fun isConverted(context: android.content.Context, fileName: String): Boolean =
+        convertedSet(context).contains(fileName)
+
+    fun forgetConverted(context: android.content.Context, fileName: String) {
+        val set = convertedSet(context)
+        if (set.remove(fileName)) prefs(context).edit().putStringSet(KEY_CONVERTED, set).apply()
+    }
+
+    fun renameConverted(context: android.content.Context, oldName: String, newName: String) {
+        val set = convertedSet(context)
+        if (set.remove(oldName)) {
+            set.add(newName)
+            prefs(context).edit().putStringSet(KEY_CONVERTED, set).apply()
+        }
+    }
+
     fun list(context: android.content.Context): List<File> =
         dir(context).listFiles { f -> f.isFile && f.extension.equals(EXTENSION, ignoreCase = true) }
             ?.sortedByDescending { it.lastModified() }

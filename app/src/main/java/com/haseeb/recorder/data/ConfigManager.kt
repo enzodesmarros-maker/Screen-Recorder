@@ -34,6 +34,7 @@ class ConfigManager(private val context: Context) {
         const val KEY_VIDEO_ORIENTATION = "video_orientation"
         const val KEY_AMOLED = "amoled_mode"
         const val KEY_LOGGING = "diagnostic_logging"
+        const val KEY_KNOWN_VIDEO_NAMES = "known_video_names"
         const val KEY_RECORDING_MODE = "recording_mode"
         const val RECORDING_MODE_NORMAL = "normal"
         const val RECORDING_MODE_STAGED = "staged"
@@ -173,6 +174,16 @@ class ConfigManager(private val context: Context) {
     var recordingMode: String
         get() = prefs.getString(KEY_RECORDING_MODE, RECORDING_MODE_NORMAL) ?: RECORDING_MODE_NORMAL
         set(value) = prefs.edit().putString(KEY_RECORDING_MODE, value).apply()
+
+    /* Names the app renamed itself, so renamed videos in a custom folder still show in the list. */
+    val knownVideoNames: Set<String>
+        get() = prefs.getStringSet(KEY_KNOWN_VIDEO_NAMES, emptySet()) ?: emptySet()
+
+    fun addKnownVideoName(name: String) {
+        val updated = HashSet(knownVideoNames)
+        updated.add(name)
+        prefs.edit().putStringSet(KEY_KNOWN_VIDEO_NAMES, updated).apply()
+    }
 
     var isLoggingEnabled: Boolean
         get() = prefs.getBoolean(KEY_LOGGING, DEFAULT_LOGGING_ENABLED)

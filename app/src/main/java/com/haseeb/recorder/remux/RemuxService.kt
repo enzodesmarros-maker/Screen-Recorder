@@ -15,6 +15,7 @@ import android.os.Looper
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.haseeb.recorder.R
+import com.haseeb.recorder.recording.RawRecordings
 import com.haseeb.recorder.ui.activity.RawVideosActivity
 import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.util.MainThreadWatchdog
@@ -73,6 +74,7 @@ class RemuxService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
     private var lastPercent = -2
     private var finished = false
+    private var rawFileName = ""
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -105,6 +107,7 @@ class RemuxService : Service() {
         isRunning = true
         finished = false
         currentName = file.nameWithoutExtension
+        rawFileName = file.name
         lastPercent = -2
         acquireWakeLock()
         MainThreadWatchdog.acquire()
@@ -156,6 +159,7 @@ class RemuxService : Service() {
         listener?.invoke(100, 0, true, success)
 
         if (success) {
+            RawRecordings.markConverted(applicationContext, rawFileName)
             AppLog.i("Remux", "Conversion finished: $savedName")
             showDone(getString(R.string.RemuxService_done_title), getString(R.string.RemuxService_done_text, name))
             sendBroadcast(Intent(ACTION_REMUX_DONE).setPackage(packageName))

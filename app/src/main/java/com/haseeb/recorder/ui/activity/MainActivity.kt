@@ -24,6 +24,7 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.Job
 import com.haseeb.recorder.R
 import com.haseeb.recorder.compress.CompressionService
+import com.haseeb.recorder.remux.RemuxService
 import com.haseeb.recorder.util.AppLog
 import com.haseeb.recorder.data.ConfigManager
 import com.haseeb.recorder.overlay.RecordingOverlayService
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
                 ScreenRecordService.ACTION_STATE_CHANGED -> syncRecordingUi()
                 CompressionService.ACTION_COMPRESSION_DONE -> loadVideos()
                 RecordingOverlayService.ACTION_BUBBLE_STATE_CHANGED -> syncBubbleButton()
+                RemuxService.ACTION_REMUX_DONE -> loadVideos()
             }
         }
     }
@@ -149,6 +151,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setupRecyclerView() {
         adapter = VideoAdapter()
+        adapter.onListChanged = { loadVideos() }
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
@@ -211,9 +214,24 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
-        return if (missing.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, missing.toTypedArray(), REQUEST_PERMISSIONS_CODE)
-            false
+        // Optional: lets the app list recordings left by a previous install. Asked only once and never blocks recording.
+        val mediaPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_VIDEO
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+        val statePrefs = getPreferences(MODE_PRIVATE)
+        val askMedia = ContextCompat.checkSelfPermission(this, mediaPermission) != PackageManager.PERMISSION_GRANTED &&
+            !statePrefs.getBoolean("media_permission_asked", false)
+
+        return if (missing.isNotEmpty() || askMedia) {
+            val toAsk = missing.toMutableList()
+            if (askMedia) {
+                toAsk.add(mediaPermission)
+                statePrefs.edit().putBoolean("media_permission_asked", true).apply()
+            }
+            ActivityCompat.requestPermissions(this, toAsk.toTypedArray(), REQUEST_PERMISSIONS_CODE)
+            missing.isEmpty()
         } else {
             true
         }
@@ -276,8 +294,19 @@ class MainActivity : AppCompatActivity() {
                 MediaStore.Video.Media.HEIGHT
             )
 
-            val selection = "${MediaStore.Video.Media.DISPLAY_NAME} LIKE ?"
-            val selectionArgs = arrayOf("ScreenRecord_%.mp4")
+            // Show the app's videos by name OR by folder, so renamed videos and ones left by an older install still appear.
+            val selection: String
+            val selectionArgs: Array<String>
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                selection = "(${MediaStore.Video.Media.DISPLAY_NAME} LIKE ? OR " +
+                    "${MediaStore.Video.Media.RELATIVE_PATH} LIKE ? OR ${MediaStore.Video.Media.RELATIVE_PATH} LIKE ?)"
+                selectionArgs = arrayOf("ScreenRecord_%.mp4", "DCIM/ScreenCats/%", "DCIM/ScreenRecorder/%")
+            } else {
+                @Suppress("DEPRECATION")
+                selection = "(${MediaStore.Video.Media.DISPLAY_NAME} LIKE ? OR " +
+                    "${MediaStore.Video.Media.DATA} LIKE ? OR ${MediaStore.Video.Media.DATA} LIKE ?)"
+                selectionArgs = arrayOf("ScreenRecord_%.mp4", "%/DCIM/ScreenCats/%", "%/DCIM/ScreenRecorder/%")
+            }
 
             contentResolver.query(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -312,6 +341,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val customUriString = configManager.customStorageUri
+            val knownNames = configManager.knownVideoNames
             if (!customUriString.isNullOrEmpty()) {
                 try {
                     val treeUri = Uri.parse(customUriString)
@@ -319,7 +349,10 @@ class MainActivity : AppCompatActivity() {
                     if (pickedDir != null && pickedDir.isDirectory) {
                         val docFiles = pickedDir.listFiles()
                         for (docFile in docFiles) {
-                            if (docFile.isFile && docFile.name?.startsWith("ScreenRecord_") == true && docFile.name?.endsWith(".mp4") == true) {
+                            val docName = docFile.name ?: ""
+                            val isAppVideo = docName.endsWith(".mp4") &&
+                                (docName.startsWith("ScreenRecord_") || docName in knownNames)
+                            if (docFile.isFile && isAppVideo) {
                                 val alreadyAdded = videos.any { it.name == docFile.name }
                                 if (!alreadyAdded && docFile.length() > 0L) {
                                     val generatedId = (docFile.name ?: "").hashCode().toLong()
@@ -386,6 +419,7 @@ class MainActivity : AppCompatActivity() {
         val filter = IntentFilter(ScreenRecordService.ACTION_STATE_CHANGED).apply {
             addAction(CompressionService.ACTION_COMPRESSION_DONE)
             addAction(RecordingOverlayService.ACTION_BUBBLE_STATE_CHANGED)
+            addAction(RemuxService.ACTION_REMUX_DONE)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(recordingStateReceiver, filter, Context.RECEIVER_EXPORTED)
@@ -397,6 +431,19 @@ class MainActivity : AppCompatActivity() {
     /*
      * Syncs the FAB state whenever the activity comes to the foreground.
      */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSIONS_CODE) loadVideos()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == VideoAdapter.REQUEST_RENAME_VIDEO && resultCode == RESULT_OK) {
+            adapter.completePendingRename(this)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         syncRecordingUi()

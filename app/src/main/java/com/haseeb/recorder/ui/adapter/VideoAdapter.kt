@@ -33,6 +33,7 @@ import java.util.Locale
 class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallback()) {
     private companion object {
         const val REQUEST_DELETE_VIDEO = 1001
+        const val REQUEST_RENAME_VIDEO = 1002
     }
 
     /*
@@ -130,6 +131,70 @@ class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallbac
     /*
      * Displays a dialog to rename the selected recording file.
      */
+    /* Invoked after a change that MediaStore may not announce (e.g. a renamed file in a custom folder). */
+    var onListChanged: (() -> Unit)? = null
+
+    private var pendingRename: Pair<VideoFile, String>? = null
+
+    /*
+     * Renames any video, including ones owned by a previous install (asks the user for access when needed).
+     */
+    private fun renameVideo(video: VideoFile, newBase: String, context: android.content.Context) {
+        val fileName = "$newBase.mp4"
+        try {
+            if (video.uri.authority == MediaStore.AUTHORITY) {
+                val values = ContentValues().apply { put(MediaStore.Video.Media.DISPLAY_NAME, fileName) }
+                val rows = context.contentResolver.update(video.uri, values, null, null)
+                if (rows <= 0) throw SecurityException("Not allowed to update this video")
+            } else {
+                android.provider.DocumentsContract.renameDocument(context.contentResolver, video.uri, fileName)
+                    ?: throw IllegalStateException("Rename failed")
+                com.haseeb.recorder.data.ConfigManager(context).addKnownVideoName(fileName)
+                onListChanged?.invoke()
+            }
+        } catch (e: SecurityException) {
+            if (!requestRenameAccess(video, newBase, e, context)) showRenameFailedToast(context)
+        } catch (e: Exception) {
+            showRenameFailedToast(context)
+        }
+    }
+
+    private fun requestRenameAccess(
+        video: VideoFile,
+        newBase: String,
+        error: SecurityException,
+        context: android.content.Context
+    ): Boolean {
+        val activity = context as? AppCompatActivity ?: return false
+        return try {
+            val sender: IntentSender = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ->
+                    MediaStore.createWriteRequest(context.contentResolver, listOf(video.uri)).intentSender
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && error is android.app.RecoverableSecurityException ->
+                    error.userAction.actionIntent.intentSender
+                else -> return false
+            }
+            pendingRename = Pair(video, newBase)
+            activity.startIntentSenderForResult(sender, REQUEST_RENAME_VIDEO, null, 0, 0, 0)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /*
+     * Finishes a rename after the user allowed the app to modify the video.
+     */
+    fun completePendingRename(context: android.content.Context) {
+        val pending = pendingRename ?: return
+        pendingRename = null
+        renameVideo(pending.first, pending.second, context)
+    }
+
+    private fun showRenameFailedToast(context: android.content.Context) {
+        Toast.makeText(context, context.getString(R.string.VideoAdapter_toast_rename_failed), Toast.LENGTH_SHORT).show()
+    }
+
     private fun showRenameDialog(video: VideoFile, context: android.content.Context) {
         val binding = DialogEditTextBinding.inflate(LayoutInflater.from(context))
         binding.editText.setText(video.name.removeSuffix(".mp4"))
@@ -139,14 +204,7 @@ class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallbac
             .setView(binding.root)
             .setPositiveButton(context.getString(R.string.VideoAdapter_btn_rename)) { _, _ ->
                 val newName = binding.editText.text.toString().trim()
-                if (newName.isNotEmpty()) {
-                    val values = ContentValues().apply { put(MediaStore.Video.Media.DISPLAY_NAME, "$newName.mp4") }
-                    try {
-                        context.contentResolver.update(video.uri, values, null, null)
-                    } catch (e: Exception) {
-                        Toast.makeText(context, context.getString(R.string.VideoAdapter_toast_rename_failed), Toast.LENGTH_SHORT).show()
-                    }
-                }
+                if (newName.isNotEmpty()) renameVideo(video, newName, context)
             }
             .setNegativeButton(context.getString(R.string.VideoAdapter_btn_cancel), null)
             .show()

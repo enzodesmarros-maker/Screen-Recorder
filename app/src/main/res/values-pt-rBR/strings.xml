@@ -364,7 +364,6 @@
     <string name="sheet_settings_logs_empty">Ainda não há logs registrados.</string>
     <string name="sheet_settings_logs_failed">Não foi possível preparar os logs.</string>
     <string name="sheet_settings_logs_toggle_title">Registrar logs</string>
-    <string name="sheet_settings_logs_toggle_summary">Salva um registro técnico para ajudar a achar problemas. Desligado por padrão.</string>
     <string name="AboutActivity_contributor_xitzinho_name" translatable="false">Xitzinho</string>
     <string name="AboutActivity_contributor_xitzinho_role">Desenvolvedor desta versão</string>
     <string name="AboutActivity_contributor_xitzinho_desc">Pegou o projeto original e o melhorou: gravação em 1080p, bolinha flutuante de gravação, compressão de vídeo em segundo plano, modo AMOLED e logs de diagnóstico.</string>
@@ -388,7 +387,6 @@
     <string name="raw_progress_title">Convertendo %1$s</string>
     <string name="raw_btn_background">Deixar em segundo plano</string>
     <string name="raw_btn_cancel_conversion">Cancelar conversão</string>
-    <string name="raw_toast_convert_done">Pronto! O vídeo em MP4 está na sua galeria.</string>
     <string name="raw_toast_convert_stopped">Conversão interrompida.</string>
     <string name="raw_item_recording_now">Gravando agora…</string>
     <string name="raw_item_subtitle">%1$s • %2$s</string>
@@ -405,11 +403,16 @@
     <string name="RemuxService_done_text">%1$s está pronto na galeria em MP4. O arquivo original continua na tela de vídeos sem conversão.</string>
     <string name="RemuxService_failed_text">Não foi possível converter %1$s. O arquivo original foi mantido.</string>
     <string name="sheet_settings_recmode_title">Modo de gravação</string>
-    <string name="sheet_settings_recmode_summary">O Normal é o recomendado. Toque no botão i para ver a diferença.</string>
     <string name="sheet_settings_recmode_normal">Normal (recomendado)</string>
     <string name="sheet_settings_recmode_staged">Por etapas</string>
     <string name="sheet_settings_recmode_help_desc">O que é isso?</string>
     <string name="sheet_settings_recmode_help_ok">Entendi</string>
     <string name="sheet_settings_recmode_staged_toast">As gravações neste modo aparecem no botão de pasta, ao lado da engrenagem na tela inicial.</string>
     <string name="sheet_settings_recmode_help_msg">Normal (recomendado)\nSeu vídeo já aparece na galeria assim que você para de gravar. É o melhor para o dia a dia.\n\nPor etapas\nO vídeo é salvo de um jeito especial e seguro enquanto você grava. Se o celular desligar, a bateria acabar ou o app fechar, você NÃO perde a gravação.\nO porém: depois de gravar, ele ainda não vai para a galeria. Você abre o botão de pasta ao lado da engrenagem na tela inicial e converte para um vídeo normal. A conversão pode demorar em vídeos longos, mas roda em segundo plano.\nBom para gravações longas ou quando você não pode perder o vídeo.</string>
+    <string name="raw_item_converted">Convertido</string>
+    <string name="raw_dialog_delete_msg_converted">Este vídeo já foi convertido para MP4 e está na sua galeria. Excluir este arquivo original só libera espaço.</string>
+    <string name="raw_dialog_converted_title">Conversão concluída</string>
+    <string name="raw_dialog_converted_msg">O vídeo em MP4 já está na sua galeria. Quer excluir o arquivo original para liberar espaço?</string>
+    <string name="raw_btn_delete_original">Excluir original</string>
+    <string name="raw_btn_keep">Manter</string>
 </resources>

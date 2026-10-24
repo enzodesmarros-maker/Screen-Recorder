@@ -411,7 +411,6 @@
     <string name="sheet_settings_logs_empty">No logs recorded yet.</string>
     <string name="sheet_settings_logs_failed">Could not prepare the logs.</string>
     <string name="sheet_settings_logs_toggle_title">Record logs</string>
-    <string name="sheet_settings_logs_toggle_summary">Saves a technical log to help find problems. Off by default.</string>
     <string name="AboutActivity_contributor_xitzinho_name" translatable="false">Xitzinho</string>
     <string name="AboutActivity_contributor_xitzinho_role">Developer of this version</string>
     <string name="AboutActivity_contributor_xitzinho_desc">Took the original project and improved it: 1080p recording, floating record bubble, background video compression, AMOLED mode and diagnostic logs.</string>
@@ -435,7 +434,6 @@
     <string name="raw_progress_title">Converting %1$s</string>
     <string name="raw_btn_background">Keep in background</string>
     <string name="raw_btn_cancel_conversion">Cancel conversion</string>
-    <string name="raw_toast_convert_done">Done! The MP4 video is in your gallery.</string>
     <string name="raw_toast_convert_stopped">Conversion stopped.</string>
     <string name="raw_item_recording_now">Recording now…</string>
     <string name="raw_item_subtitle">%1$s • %2$s</string>
@@ -452,11 +450,16 @@
     <string name="RemuxService_done_text">%1$s is ready in your gallery as an MP4. The original file is still in the unconverted videos screen.</string>
     <string name="RemuxService_failed_text">Could not convert %1$s. The original file was kept.</string>
     <string name="sheet_settings_recmode_title">Recording mode</string>
-    <string name="sheet_settings_recmode_summary">Normal is recommended. Tap the i button to see the difference.</string>
     <string name="sheet_settings_recmode_normal">Normal (recommended)</string>
     <string name="sheet_settings_recmode_staged">In stages</string>
     <string name="sheet_settings_recmode_help_desc">What is this?</string>
     <string name="sheet_settings_recmode_help_ok">Got it</string>
     <string name="sheet_settings_recmode_staged_toast">Recordings in this mode appear on the folder button, next to the gear on the home screen.</string>
     <string name="sheet_settings_recmode_help_msg">Normal (recommended)\nYour video is ready in the gallery as soon as you stop recording. Best for everyday use.\n\nIn stages\nThe video is saved in a special safe way while you record. If your phone turns off, the battery dies or the app closes, you do NOT lose your recording.\nThe catch: after recording, it does not go to the gallery yet. You open the folder button next to the gear on the home screen and convert it to a normal video. Converting can take a while for long videos, but it runs in the background.\nGood for long recordings, or when you cannot afford to lose the video.</string>
+    <string name="raw_item_converted">Converted</string>
+    <string name="raw_dialog_delete_msg_converted">This video was already converted to MP4 and is in your gallery. Deleting this original file only frees up space.</string>
+    <string name="raw_dialog_converted_title">Conversion finished</string>
+    <string name="raw_dialog_converted_msg">The MP4 video is now in your gallery. Do you want to delete the original file to free up space?</string>
+    <string name="raw_btn_delete_original">Delete original</string>
+    <string name="raw_btn_keep">Keep</string>
 </resources>
