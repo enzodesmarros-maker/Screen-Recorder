@@ -415,4 +415,5 @@
     <string name="raw_dialog_converted_msg">O vídeo em MP4 já está na sua galeria. Quer excluir o arquivo original para liberar espaço?</string>
     <string name="raw_btn_delete_original">Excluir original</string>
     <string name="raw_btn_keep">Manter</string>
+    <string name="sheet_settings_logs_toggle_summary">Salva um registro técnico para ajudar a achar problemas.</string>
 </resources>

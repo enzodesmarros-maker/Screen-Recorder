@@ -418,11 +418,18 @@ class ConfigManager(private val context: Context) {
             @Suppress("DEPRECATION")
             wm.defaultDisplay
         }
-        val refreshRate = display?.mode?.refreshRate ?: @Suppress("DEPRECATION") display?.refreshRate ?: 60f
-        val fps = refreshRate.toInt()
+        // The current mode can be lower than what the screen supports (adaptive refresh rate), so also check
+        // every supported mode, and round (a 120 Hz screen often reports 119.88).
+        var refreshRate = display?.mode?.refreshRate ?: @Suppress("DEPRECATION") display?.refreshRate ?: 60f
+        try {
+            display?.supportedModes?.forEach { mode ->
+                if (mode.refreshRate > refreshRate) refreshRate = mode.refreshRate
+            }
+        } catch (_: Exception) {}
+        val fps = Math.round(refreshRate)
         return when {
-            fps >= 120 -> 120
-            fps >= 90 -> 90
+            fps >= 118 -> 120
+            fps >= 88 -> 90
             else -> 60
         }
     }

@@ -31,7 +31,7 @@ import java.util.Locale
  * Adapter for managing and displaying video files in the recordings list.
  */
 class VideoAdapter : ListAdapter<VideoFile, ListItemViewHolder>(VideoDiffCallback()) {
-    private companion object {
+    companion object {
         const val REQUEST_DELETE_VIDEO = 1001
         const val REQUEST_RENAME_VIDEO = 1002
     }

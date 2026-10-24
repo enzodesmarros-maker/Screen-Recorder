@@ -462,4 +462,5 @@
     <string name="raw_dialog_converted_msg">The MP4 video is now in your gallery. Do you want to delete the original file to free up space?</string>
     <string name="raw_btn_delete_original">Delete original</string>
     <string name="raw_btn_keep">Keep</string>
+    <string name="sheet_settings_logs_toggle_summary">Saves a technical log to help find problems.</string>
 </resources>
